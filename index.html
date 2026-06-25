@@ -110,7 +110,7 @@ canvas.mini{max-height:75px;margin-top:8px;}
 .dchev{font-size:.8rem;color:var(--text3);transition:transform .2s;margin-left:4px;}
 .dcard.open .dchev{transform:rotate(180deg);}
 .dbody{display:none;padding:4px 17px 15px;}
-.dcard.open .dbody{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.dcard.open .dbody{display:grid;grid-template-columns:1.2fr 1fr;gap:13px;}
 .dmrow{display:flex;align-items:center;gap:8px;background:var(--bg2);border-radius:8px;padding:7px 9px;border:1px solid rgba(255,255,255,.04);margin-bottom:5px;}
 .dm-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .dm-name{font-size:.7rem;font-weight:600;min-width:90px;}
@@ -625,27 +625,53 @@ function processAndRender(rows) {
           </div>`).join('')}</div>
         <div style="background:var(--bg2);border-radius:9px;padding:11px;border:1px solid var(--border)">
           <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:7px">Time Share</div>
-          <canvas style="max-height:200px" id="dc-${di}"></canvas>
+          <canvas style="max-height:160px" id="dc-${di}"></canvas>
         </div>
       </div>`;
     drow.appendChild(el);
     setTimeout(()=>{
       if(charts['dc-'+di])charts['dc-'+di].destroy();
       const dcTotal=mArr.reduce((s,[,d])=>s+d.mins,0);
+      // Custom plugin: draw % text inside each slice
+      const dcPctPlugin={
+        id:'dcPct'+di,
+        afterDraw(chart){
+          const {ctx,data}=chart;
+          const ds=chart.getDatasetMeta(0);
+          ds.data.forEach((arc,i)=>{
+            const pct=dcTotal>0?(data.datasets[0].data[i]/dcTotal*100):0;
+            if(pct<5) return; // skip tiny slices
+            const angle=(arc.startAngle+arc.endAngle)/2;
+            const r=(arc.innerRadius+arc.outerRadius)/2;
+            const x=arc.x+Math.cos(angle)*r;
+            const y=arc.y+Math.sin(angle)*r;
+            ctx.save();
+            ctx.font='bold 9px Inter,sans-serif';
+            ctx.fillStyle='#fff';
+            ctx.textAlign='center';
+            ctx.textBaseline='middle';
+            ctx.shadowColor='rgba(0,0,0,.8)';
+            ctx.shadowBlur=3;
+            ctx.fillText(pct.toFixed(0)+'%',x,y);
+            ctx.restore();
+          });
+        }
+      };
       charts['dc-'+di]=new Chart(document.getElementById('dc-'+di),{
         type:'doughnut',
         data:{
-          labels:mArr.map(([w,d])=>{const pct=dcTotal>0?(d.mins/dcTotal*100).toFixed(0):'0';return `${w} (${pct}%)`;}),
+          labels:mArr.map(([w])=>w),
           datasets:[{data:mArr.map(([,d])=>d.mins),backgroundColor:mArr.map(([w])=>getColor(w)),borderWidth:2,borderColor:'#111120'}]
         },
         options:{responsive:true,cutout:'55%',plugins:{
           legend:{
-            position:'bottom',
-            align:'start',
-            labels:{font:{size:8.5},boxWidth:8,color:'#b0b3c6',padding:6}
+            position:'right',
+            align:'center',
+            labels:{font:{size:9},boxWidth:8,color:'#b0b3c6',padding:8}
           },
           tooltip:{callbacks:{label:ctx=>{const pct=dcTotal>0?(ctx.raw/dcTotal*100).toFixed(1):'0';return ` ${Math.round(ctx.raw)}m — ${pct}%`;}}}
-        }}
+        }},
+        plugins:[dcPctPlugin]
       });
     },80);
   });
