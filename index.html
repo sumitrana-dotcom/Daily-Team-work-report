@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Daily Work Report — June 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f7; color: #222; }
+
+  header {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+    color: #fff;
+    padding: 24px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.5px; }
+  header span { font-size: 0.9rem; opacity: 0.75; }
+
+  .container { max-width: 1300px; margin: 0 auto; padding: 28px 24px; }
+
+  /* KPI row */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
+  .kpi {
+    background: #fff; border-radius: 12px; padding: 22px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-left: 5px solid #3949ab;
+  }
+  .kpi.orange { border-left-color: #e65100; }
+  .kpi.teal   { border-left-color: #00796b; }
+  .kpi.purple { border-left-color: #6a1b9a; }
+  .kpi-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 8px; }
+  .kpi-value { font-size: 2rem; font-weight: 700; color: #1a237e; }
+  .kpi.orange .kpi-value { color: #e65100; }
+  .kpi.teal   .kpi-value { color: #00796b; }
+  .kpi.purple .kpi-value { color: #6a1b9a; }
+  .kpi-sub { font-size: 0.8rem; color: #aaa; margin-top: 4px; }
+
+  /* Charts grid */
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 22px; }
+  .chart-card {
+    background: #fff; border-radius: 12px; padding: 22px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .chart-card.full { grid-column: 1 / -1; }
+  .card-title { font-size: 0.9rem; font-weight: 600; color: #444; margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
+  canvas { max-height: 280px; }
+
+  /* Table */
+  .table-card {
+    background: #fff; border-radius: 12px; padding: 22px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 22px;
+    overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  thead th { background: #e8eaf6; color: #1a237e; font-weight: 600; padding: 10px 14px; text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  tbody tr:hover { background: #f5f5ff; }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+  .bar-bg { background: #e8eaf6; border-radius: 4px; height: 8px; min-width: 80px; }
+  .bar-fill { background: #3949ab; border-radius: 4px; height: 8px; }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 600;
+    background: #e8eaf6; color: #3949ab;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Team Daily Work Report</h1>
+    <div style="margin-top:4px;opacity:.75;font-size:.85rem;">June 15 – 24, 2026</div>
+  </div>
+  <span>6 team members · 238 tasks</span>
+</header>
+
+<div class="container">
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Total Minutes Worked</div>
+      <div class="kpi-value">12,505</div>
+      <div class="kpi-sub">≈ 208.4 hours</div>
+    </div>
+    <div class="kpi orange">
+      <div class="kpi-label">Total VINs Reviewed</div>
+      <div class="kpi-value">215,126</div>
+      <div class="kpi-sub">Across all rooftops</div>
+    </div>
+    <div class="kpi teal">
+      <div class="kpi-label">Impacted VINs</div>
+      <div class="kpi-value">41,869</div>
+      <div class="kpi-sub">19.5% impact rate</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-label">Active Days</div>
+      <div class="kpi-value">9</div>
+      <div class="kpi-sub">Jun 15 – 24</div>
+    </div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="card-title">Minutes by Team Member</div>
+      <canvas id="workerMinChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="card-title">VINs Reviewed vs Impacted by Member</div>
+      <canvas id="workerVinsChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="charts-grid">
+    <div class="chart-card full">
+      <div class="card-title">Daily Minutes by Team Member</div>
+      <canvas id="dailyStackedChart" style="max-height:260px"></canvas>
+    </div>
+  </div>
+
+  <!-- Charts row 3 -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="card-title">Work Distribution by Review Type</div>
+      <canvas id="reviewTypeChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="card-title">Daily VINs Reviewed</div>
+      <canvas id="dailyVinsChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Per-member table -->
+  <div class="table-card">
+    <div class="card-title" style="margin-bottom:16px">Team Member Summary</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Tasks</th>
+          <th>Minutes</th>
+          <th>Hours</th>
+          <th>VINs Reviewed</th>
+          <th>Impacted VINs</th>
+          <th>Impact %</th>
+          <th>Effort Share</th>
+        </tr>
+      </thead>
+      <tbody id="memberTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const WORKERS = [
+  { name: 'Vijay',           minutes: 4056.4, vins: 53541, impacted: 12515, tasks: 97 },
+  { name: 'Khushi',          minutes: 3068.9, vins: 59997, impacted: 10382, tasks: 41 },
+  { name: 'Shweta Gupta',    minutes: 2658.3, vins: 54352, impacted:  9157, tasks: 31 },
+  { name: 'Tannu Kumari',    minutes: 2277.0, vins: 41111, impacted:  7647, tasks: 62 },
+  { name: 'Karmendra Singh', minutes:  442.3, vins:  6060, impacted:  2168, tasks:  7 },
+  { name: 'Sumit Rana',      minutes:    2.1, vins:    65, impacted:     6, tasks:  1 },
+];
+
+const DATES = ['15-Jun','16-Jun','17-Jun','18-Jun','19-Jun','20-Jun','22-Jun','23-Jun','24-Jun'];
+
+// Worker daily minutes (merged 19-Jun-26 and 19-June-26 for Vijay+Khushi)
+const WORKER_DAILY = {
+  'Vijay':           [1086, 1041,  759, 238, 920.2,  174,   9.5,  12.7, 276],
+  'Khushi':          [ 395,  435,  557, 342, 327.3,  323.5,102.1,106,   481],
+  'Shweta Gupta':    [ 202,  112,  452, 267, 535,    260.4,194.1,220.4, 415.4],
+  'Tannu Kumari':    [  98,  372,  631, 176, 478,    151,  108.3,120.2, 142.5],
+  'Karmendra Singh': [   0,    0,  156,   0,   5.2,    0,   54,  190.7,  36.4],
+  'Sumit Rana':      [   0,    0,    0,   0,   0,      0,    0,    0,     2.1],
+};
+
+const REVIEW_TYPES = [
+  { type: 'Website Lite Review',   minutes: 7200.3, tasks: 169 },
+  { type: 'QC',                    minutes: 3138.0, tasks:  43 },
+  { type: 'Website Deep Review',   minutes: 1836.0, tasks:   5 },
+  { type: 'Sequencing - Console',  minutes:  222.0, tasks:   2 },
+  { type: 'Website URL searching', minutes:   91.5, tasks:  16 },
+  { type: 'Console Lite Review',   minutes:   12.0, tasks:   2 },
+  { type: 'Console Upload',        minutes:    5.2, tasks:   1 },
+  { type: 'Console Deep Review',   minutes:    0.0, tasks:   1 },
+];
+
+const DAILY_VINS = [9485, 30561, 55234, 25327, 27703, 25823, 7705, 7174, 26114];
+
+const COLORS = ['#3949ab','#e65100','#00796b','#6a1b9a','#c62828','#00838f'];
+const COLORS_ALPHA = COLORS.map(c => c + 'bb');
+
+// ── Chart 1: Minutes by worker (horizontal bar) ──
+new Chart(document.getElementById('workerMinChart'), {
+  type: 'bar',
+  data: {
+    labels: WORKERS.map(w => w.name),
+    datasets: [{ label: 'Minutes', data: WORKERS.map(w => w.minutes), backgroundColor: COLORS, borderRadius: 6 }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { x: { grid: { color: '#f0f0f0' } }, y: { grid: { display: false } } }
+  }
+});
+
+// ── Chart 2: VINs reviewed vs impacted ──
+new Chart(document.getElementById('workerVinsChart'), {
+  type: 'bar',
+  data: {
+    labels: WORKERS.map(w => w.name),
+    datasets: [
+      { label: 'VINs Reviewed', data: WORKERS.map(w => w.vins), backgroundColor: '#3949abaa', borderRadius: 4 },
+      { label: 'Impacted VINs', data: WORKERS.map(w => w.impacted), backgroundColor: '#e65100aa', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top' } },
+    scales: { x: { grid: { display: false } }, y: { grid: { color: '#f0f0f0' } } }
+  }
+});
+
+// ── Chart 3: Daily stacked by worker ──
+new Chart(document.getElementById('dailyStackedChart'), {
+  type: 'bar',
+  data: {
+    labels: DATES,
+    datasets: Object.entries(WORKER_DAILY).map(([name, data], i) => ({
+      label: name, data, backgroundColor: COLORS[i], borderRadius: 3
+    }))
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, grid: { color: '#f0f0f0' } }
+    },
+    plugins: { legend: { position: 'right' } }
+  }
+});
+
+// ── Chart 4: Review type donut ──
+new Chart(document.getElementById('reviewTypeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: REVIEW_TYPES.map(r => r.type),
+    datasets: [{ data: REVIEW_TYPES.map(r => r.minutes), backgroundColor: ['#3949ab','#e65100','#00796b','#6a1b9a','#c62828','#00838f','#f57f17','#4e342e'], borderWidth: 2 }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } }
+  }
+});
+
+// ── Chart 5: Daily VINs line ──
+new Chart(document.getElementById('dailyVinsChart'), {
+  type: 'line',
+  data: {
+    labels: DATES,
+    datasets: [{
+      label: 'VINs Reviewed',
+      data: DAILY_VINS,
+      borderColor: '#3949ab', backgroundColor: '#3949ab22',
+      fill: true, tension: 0.4, pointBackgroundColor: '#3949ab', pointRadius: 5
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { x: { grid: { display: false } }, y: { grid: { color: '#f0f0f0' } } }
+  }
+});
+
+// ── Table ──
+const totalMin = WORKERS.reduce((s, w) => s + w.minutes, 0);
+const tbody = document.getElementById('memberTable');
+WORKERS.forEach(w => {
+  const share = (w.minutes / totalMin * 100).toFixed(1);
+  const impactPct = w.vins > 0 ? (w.impacted / w.vins * 100).toFixed(1) : '—';
+  tbody.innerHTML += `
+    <tr>
+      <td><strong>${w.name}</strong></td>
+      <td><span class="badge">${w.tasks}</span></td>
+      <td>${w.minutes.toLocaleString()}</td>
+      <td>${(w.minutes/60).toFixed(1)}</td>
+      <td>${w.vins.toLocaleString()}</td>
+      <td>${w.impacted.toLocaleString()}</td>
+      <td>${impactPct}%</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="bar-bg"><div class="bar-fill" style="width:${share}%"></div></div>
+          <span style="font-size:.8rem;color:#555">${share}%</span>
+        </div>
+      </td>
+    </tr>`;
+});
+</script>
+</body>
+</html>
