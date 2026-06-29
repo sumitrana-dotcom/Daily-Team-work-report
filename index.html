@@ -724,7 +724,7 @@ function processAndRender(rows) {
             <div class="dm-dot" style="background:${getColor(w)}"></div>
             <div class="dm-name" style="color:${getColor(w)}">${w}</div>
             <div class="dm-bwrap"><div class="dm-bbg"><div class="dm-bf" style="width:${(d.mins/maxM*100).toFixed(0)}%;background:${getColor(w)}"></div></div></div>
-            <div class="dm-s"><b>${Math.round(d.mins)}m</b>act · <b>${Math.round(d.exp)}m</b>exp · <b style="color:${d.exp>0&&d.mins/d.exp>=0.85?'#76ff03':'#ffea00'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b>eff · <b>${d.vins.toLocaleString()}</b>VINs</div>
+            <div class="dm-s"><b>${Math.round(d.mins)}m</b> · <b style="color:${d.exp>0&&d.mins/d.exp>=0.85?'#76ff03':'#ffea00'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b></div>
           </div>`).join('')}</div>
         <div style="background:var(--bg2);border-radius:9px;padding:11px;border:1px solid var(--border)">
           <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:7px">Time Share</div>
