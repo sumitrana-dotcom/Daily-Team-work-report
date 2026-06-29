@@ -3,187 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Team Live Dashboard — June 2026</title>
+<title>Team Ops Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-:root{
-  --red:#ff1744;--red2:#ff4569;--red3:#ff6b8a;--red-glow:rgba(255,23,68,.35);
-  --bg:#0a0a0f;--bg2:#0f0f18;--card:#111120;
-  --border:rgba(255,23,68,.25);--border2:rgba(255,23,68,.5);
-  --text:#fff;--text2:#b0b3c6;--text3:#6b6e85;
-}
+:root{--red:#ff1744;--red2:#ff4569;--red3:#ff6b8a;--glow:rgba(255,23,68,.3);--bg:#0a0a0f;--bg2:#0f0f18;--card:#111120;--b:rgba(255,23,68,.22);--b2:rgba(255,23,68,.5);--t:#fff;--t2:#b0b3c6;--t3:#6b6e85;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:#0a0a0f;}::-webkit-scrollbar-thumb{background:var(--red);border-radius:3px;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px;}
 
-/* HEADER */
-header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-icon{width:36px;height:36px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 0 16px var(--red-glow);}
-.logo-text{font-size:.95rem;font-weight:800;}
-.logo-sub{font-size:.62rem;color:var(--text3);margin-top:2px;}
-.nav{display:flex;gap:5px;flex-wrap:wrap;}
-.nav-btn{padding:7px 15px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;}
-.nav-btn:hover,.nav-btn.active{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 0 12px var(--red-glow);}
-.hright{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.sync-info{font-size:.65rem;color:var(--text3);text-align:right;line-height:1.6;}
-.sync-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:rgba(255,23,68,.1);color:var(--red);font-size:.75rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+header{position:sticky;top:0;z-index:99;background:rgba(10,10,15,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.logo{display:flex;align-items:center;gap:9px;}
+.logo-icon{width:34px;height:34px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 0 14px var(--glow);}
+.logo-text{font-size:.92rem;font-weight:800;}
+.logo-sub{font-size:.6rem;color:var(--t3);margin-top:1px;}
+.nav{display:flex;gap:5px;}
+.nb{padding:6px 14px;border-radius:6px;border:1px solid var(--b);background:transparent;color:var(--t2);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;}
+.nb:hover,.nb.active{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 0 10px var(--glow);}
+.hright{display:flex;align-items:center;gap:10px;}
+.sync-info{font-size:.63rem;color:var(--t3);text-align:right;line-height:1.5;}
+.sync-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--b2);background:rgba(255,23,68,.1);color:var(--red);font-size:.73rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
 .sync-btn:hover{background:var(--red);color:#fff;}
-.sync-btn:disabled{opacity:.5;cursor:not-allowed;}
-.clock-pill{display:flex;align-items:center;gap:6px;background:rgba(255,23,68,.1);border:1px solid var(--border2);border-radius:99px;padding:5px 12px;}
-.ldot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--red-glow);}50%{box-shadow:0 0 0 5px transparent;}}
-.ctime{font-size:.8rem;font-weight:700;color:var(--red);}
+.cpill{display:flex;align-items:center;gap:5px;background:rgba(255,23,68,.1);border:1px solid var(--b2);border-radius:99px;padding:4px 11px;}
+.cdot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--glow);}50%{box-shadow:0 0 0 4px transparent;}}
+.ctime{font-size:.78rem;font-weight:700;color:var(--red);}
 
-/* LOADER */
-#loader{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:20px;}
-.lring{width:56px;height:56px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.ltxt{font-size:.9rem;color:var(--text2);font-weight:600;}
-.lsub{font-size:.72rem;color:var(--text3);}
-.lstep{font-size:.7rem;color:var(--red);margin-top:4px;}
-
-/* WRAP */
-.wrap{max-width:1440px;margin:0 auto;padding:20px 22px;}
+.wrap{max-width:1400px;margin:0 auto;padding:18px 20px;}
 .view{display:none;}.view.active{display:block;}
 
-/* KPI */
-.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:20px;}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 17px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
-.kpi:hover{transform:translateY(-3px);box-shadow:0 8px 28px var(--red-glow);}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--red2));}
-.kpi-icon{font-size:1.35rem;margin-bottom:6px;}
-.kpi-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin-bottom:4px;}
-.kpi-val{font-size:1.55rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--red3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.kpi-sub{font-size:.65rem;color:var(--text3);margin-top:2px;}
-.kpi-glow{position:absolute;bottom:-20px;right:-20px;width:60px;height:60px;border-radius:50%;background:var(--red-glow);filter:blur(18px);}
+.krow{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:18px;}
+.kc{background:var(--card);border:1px solid var(--b);border-radius:11px;padding:14px 16px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.kc:hover{transform:translateY(-2px);box-shadow:0 6px 24px var(--glow);}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--red2));}
+.kc-icon{font-size:1.3rem;margin-bottom:5px;}
+.kc-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:3px;}
+.kc-val{font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--red3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.kc-sub{font-size:.63rem;color:var(--t3);margin-top:2px;}
+.kc-glow{position:absolute;bottom:-18px;right:-18px;width:55px;height:55px;border-radius:50%;background:var(--glow);filter:blur(16px);}
 
-/* GRIDS */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
-.g13{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin-bottom:18px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.g13{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px;}
+.card{background:var(--card);border:1px solid var(--b);border-radius:13px;padding:16px 18px;transition:border-color .2s,box-shadow .2s;}
+.card:hover{border-color:var(--b2);box-shadow:0 3px 20px var(--glow);}
+.ctitle{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t2);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.cdot{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red);flex-shrink:0;}
+canvas{max-height:230px;}
+canvas.tall{max-height:270px;}
 
-/* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:17px 19px;transition:border-color .2s,box-shadow .2s;}
-.card:hover{border-color:var(--border2);box-shadow:0 4px 22px var(--red-glow);}
-.ctitle{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:13px;display:flex;align-items:center;gap:7px;}
-.cdot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 7px var(--red);flex-shrink:0;}
-canvas{max-height:240px;}
-canvas.tall{max-height:285px;}
-
-/* MEMBER */
-.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:18px;}
-.mcard{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s,box-shadow .2s;}
-.mcard:hover{transform:translateY(-3px);box-shadow:0 8px 28px var(--red-glow);border-color:var(--border2);}
-.mhead{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
-.mavatar{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;border:1.5px solid var(--border2);}
-.mname{font-size:.83rem;font-weight:700;}
-.mrank{font-size:.6rem;color:var(--text3);margin-top:1px;}
-.mbadge{font-size:.66rem;font-weight:700;padding:2px 9px;border-radius:99px;background:rgba(255,23,68,.15);color:var(--red);border:1px solid var(--border);}
-.mbody{padding:12px 14px;}
-.mstats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
-.mst{background:var(--bg2);border-radius:7px;padding:7px 9px;}
-.mst-l{font-size:.57rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);}
-.mst-v{font-size:.88rem;font-weight:800;margin-top:2px;}
-.mbar{margin-top:6px;}
-.mbar-l{display:flex;justify-content:space-between;font-size:.6rem;color:var(--text3);margin-bottom:3px;}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.mcard{background:var(--card);border:1px solid var(--b);border-radius:13px;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.mcard:hover{transform:translateY(-3px);box-shadow:0 6px 26px var(--glow);border-color:var(--b2);}
+.mhead{padding:11px 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--b);}
+.mavatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;border:1.5px solid var(--b2);}
+.mname{font-size:.8rem;font-weight:700;}
+.mrank{font-size:.58rem;color:var(--t3);margin-top:1px;}
+.mbadge{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(255,23,68,.15);color:var(--red);border:1px solid var(--b);}
+.mbody{padding:11px 13px;}
+.mstats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:9px;}
+.mst{background:var(--bg2);border-radius:6px;padding:6px 8px;}
+.mst-l{font-size:.55rem;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);}
+.mst-v{font-size:.85rem;font-weight:800;margin-top:2px;}
+.mbar{margin-top:5px;}
+.mbar-l{display:flex;justify-content:space-between;font-size:.58rem;color:var(--t3);margin-bottom:3px;}
 .mbar-bg{background:rgba(255,255,255,.07);border-radius:3px;height:4px;}
 .mbar-f{border-radius:3px;height:4px;}
-canvas.mini{max-height:75px;margin-top:8px;}
+canvas.mini{max-height:70px;margin-top:7px;}
 
-/* DAILY */
-.drow{display:flex;flex-direction:column;gap:11px;}
-.dcard{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;transition:border-color .2s;}
-.dcard:hover{border-color:var(--border2);}
-.dhdr{padding:12px 17px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:linear-gradient(90deg,rgba(255,23,68,.07),transparent);}
-.dleft{display:flex;align-items:center;gap:12px;}
-.ddate{width:44px;height:44px;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,23,68,.12);border:1.5px solid var(--border2);}
-.ddate .dn{font-size:1.15rem;font-weight:900;color:var(--red);line-height:1;}
-.ddate .dm{font-size:.52rem;color:var(--text3);margin-top:1px;}
-.dtitle{font-size:.85rem;font-weight:700;}
-.dsub{font-size:.65rem;color:var(--text3);margin-top:2px;}
-.dright{display:flex;gap:14px;align-items:center;}
+.sec{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--b);}
+
+.drow{display:flex;flex-direction:column;gap:10px;}
+.dcard{background:var(--card);border:1px solid var(--b);border-radius:12px;overflow:hidden;transition:border-color .2s;}
+.dcard:hover{border-color:var(--b2);}
+.dhdr{padding:11px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:linear-gradient(90deg,rgba(255,23,68,.07),transparent);}
+.dleft{display:flex;align-items:center;gap:11px;}
+.ddate{width:42px;height:42px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,23,68,.12);border:1.5px solid var(--b2);}
+.ddate .dn{font-size:1.1rem;font-weight:900;color:var(--red);line-height:1;}
+.ddate .dm{font-size:.5rem;color:var(--t3);margin-top:1px;}
+.dtitle{font-size:.82rem;font-weight:700;}
+.dsub{font-size:.62rem;color:var(--t3);margin-top:2px;}
+.dright{display:flex;gap:12px;align-items:center;}
 .dst{text-align:center;}
-.dst-v{font-size:.9rem;font-weight:800;color:var(--red);}
-.dst-l{font-size:.55rem;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
-.dchev{font-size:.8rem;color:var(--text3);transition:transform .2s;margin-left:4px;}
+.dst-v{font-size:.88rem;font-weight:800;color:var(--red);}
+.dst-l{font-size:.53rem;color:var(--t3);text-transform:uppercase;}
+.dchev{font-size:.78rem;color:var(--t3);transition:transform .2s;margin-left:4px;}
 .dcard.open .dchev{transform:rotate(180deg);}
-.dbody{display:none;padding:4px 17px 15px;}
-.dcard.open .dbody{display:grid;grid-template-columns:1.2fr 1fr;gap:13px;}
-.dmrow{display:flex;align-items:center;gap:8px;background:var(--bg2);border-radius:8px;padding:7px 9px;border:1px solid rgba(255,255,255,.04);margin-bottom:5px;}
-.dm-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.dm-name{font-size:.7rem;font-weight:600;min-width:90px;}
+.dbody{display:none;padding:3px 16px 14px;}
+.dcard.open .dbody{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;}
+.dmrow{display:flex;align-items:center;gap:7px;background:var(--bg2);border-radius:7px;padding:6px 9px;margin-bottom:4px;}
+.dm-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dm-name{font-size:.68rem;font-weight:600;min-width:88px;}
 .dm-bwrap{flex:1;}
 .dm-bbg{background:rgba(255,255,255,.07);border-radius:3px;height:4px;}
 .dm-bf{border-radius:3px;height:4px;}
-.dm-s{font-size:.62rem;color:var(--text3);white-space:nowrap;}
-.dm-s b{color:var(--text);font-weight:700;}
+.dm-s{font-size:.62rem;color:var(--t3);white-space:nowrap;margin-left:4px;}
+.dm-s b{color:var(--t);font-weight:700;}
 
-/* WEEKLY */
-.wcard{background:var(--card);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-bottom:17px;}
-.whead{padding:15px 21px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(255,23,68,.06);}
-.wtitle{font-size:.98rem;font-weight:800;color:var(--red);}
-.wrange{font-size:.65rem;color:var(--text3);margin-top:2px;}
-.wkpis{display:flex;gap:18px;flex-wrap:wrap;}
+.wcard{background:var(--card);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.whead{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--b);background:rgba(255,23,68,.05);}
+.wtitle{font-size:.95rem;font-weight:800;color:var(--red);}
+.wrange{font-size:.62rem;color:var(--t3);margin-top:2px;}
+.wkpis{display:flex;gap:16px;flex-wrap:wrap;}
 .wkpi{text-align:center;}
-.wkpi-v{font-size:1.05rem;font-weight:800;}
-.wkpi-l{font-size:.55rem;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
-.wbody{padding:17px 21px;}
-.wgrid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:14px;}
-.wmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px;}
-.wm{background:var(--bg2);border-radius:9px;padding:10px 12px;border:1px solid var(--border);}
-.wm-n{font-size:.73rem;font-weight:700;margin-bottom:5px;}
+.wkpi-v{font-size:1rem;font-weight:800;}
+.wkpi-l{font-size:.53rem;color:var(--t3);text-transform:uppercase;}
+.wbody{padding:16px 20px;}
+.wgrid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:13px;}
+.wmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.wm{background:var(--bg2);border-radius:8px;padding:9px 11px;border:1px solid var(--b);}
+.wm-n{font-size:.7rem;font-weight:700;margin-bottom:4px;}
 .wm-s{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
-.wm-s span{font-size:.6rem;color:var(--text3);}
-.wm-s b{font-size:.73rem;font-weight:700;color:#fff;display:block;}
-.tl{padding-left:19px;position:relative;}
-.tl::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1.5px;background:var(--border2);}
+.wm-s span{font-size:.58rem;color:var(--t3);}
+.wm-s b{font-size:.7rem;font-weight:700;color:#fff;display:block;}
+.tl{padding-left:18px;position:relative;margin-top:12px;}
+.tl::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1.5px;background:var(--b2);}
 .tl-item{position:relative;margin-bottom:8px;}
-.tl-d{position:absolute;left:-16px;top:4px;width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red);}
-.tl-day{font-size:.66rem;font-weight:700;color:var(--red);}
-.tl-info{font-size:.66rem;color:var(--text2);margin-top:1px;}
+.tl-d{position:absolute;left:-15px;top:4px;width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red);}
+.tl-day{font-size:.64rem;font-weight:700;color:var(--red);}
+.tl-info{font-size:.63rem;color:var(--t2);margin-top:1px;}
 
-.sec{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:11px;display:flex;align-items:center;gap:8px;}
-.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+#toast{display:none;position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#150005;border:1px solid var(--red);color:#fff;padding:10px 18px;border-radius:9px;font-size:.78rem;z-index:9999;max-width:90vw;text-align:center;box-shadow:0 4px 18px var(--glow);}
 
-@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(3,1fr);}.mgrid{grid-template-columns:repeat(2,1fr);}.g2,.g13,.wgrid{grid-template-columns:1fr;}.g3{grid-template-columns:1fr 1fr;}}
-@media(max-width:650px){.kpi-row{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:1fr;}.mgrid{grid-template-columns:1fr;}.dcard.open .dbody{grid-template-columns:1fr;}.wmgrid{grid-template-columns:repeat(2,1fr);}.nav{display:none;}.dright{flex-wrap:wrap;gap:8px;}}
+@media(max-width:1100px){.krow{grid-template-columns:repeat(3,1fr);}.mgrid{grid-template-columns:repeat(2,1fr);}.g13,.wgrid{grid-template-columns:1fr;}.g3{grid-template-columns:1fr 1fr;}}
+@media(max-width:650px){.krow{grid-template-columns:repeat(2,1fr);}.g2,.g3{grid-template-columns:1fr;}.mgrid{grid-template-columns:1fr;}.dcard.open .dbody{grid-template-columns:1fr;}.wmgrid{grid-template-columns:repeat(2,1fr);}.nav{display:none;}}
 </style>
 </head>
 <body>
-
-<div id="loader" style="display:none">
-  <div class="lring"></div>
-  <div class="ltxt">🔥 Connecting to Google Sheets...</div>
-  <div class="lsub">Fetching live data</div>
-  <div class="lstep" id="lstep">Trying connection...</div>
-</div>
-
 <header>
-  <div class="logo">
-    <div class="logo-icon">🔥</div>
-    <div><div class="logo-text">TEAM OPS LIVE</div><div class="logo-sub" id="syncLabel">Connecting...</div></div>
-  </div>
+  <div class="logo"><div class="logo-icon">🔥</div><div><div class="logo-text">TEAM OPS LIVE</div><div class="logo-sub" id="syncLabel">Loading...</div></div></div>
   <div class="nav">
-    <button class="nav-btn active" onclick="switchView('overview',this)">Overview</button>
-    <button class="nav-btn" onclick="switchView('members',this)">Members</button>
-    <button class="nav-btn" onclick="switchView('daily',this)">Daily</button>
-    <button class="nav-btn" onclick="switchView('weekly',this)">Weekly</button>
+    <button class="nb active" onclick="sv('overview',this)">Overview</button>
+    <button class="nb" onclick="sv('members',this)">Members</button>
+    <button class="nb" onclick="sv('daily',this)">Daily</button>
+    <button class="nb" onclick="sv('weekly',this)">Weekly</button>
   </div>
   <div class="hright">
-    <div class="sync-info"><span id="lastSync">Last sync: —</span><br><span id="rowCount">Rows: —</span></div>
-    <button class="sync-btn" id="syncBtn" onclick="loadData()">🔄 Sync Now</button>
-    <div class="clock-pill"><div class="ldot"></div><div class="ctime" id="clock">--:--:--</div></div>
+    <div class="sync-info"><span id="lastSync">—</span><br><span id="rowCount">—</span></div>
+    <button class="sync-btn" onclick="bgSync()">🔄 Sync</button>
+    <div class="cpill"><div class="cdot"></div><div class="ctime" id="clock">--:--:--</div></div>
   </div>
 </header>
 
-<div class="wrap" id="mainWrap" style="display:none">
-  <!-- OVERVIEW -->
+<div class="wrap">
   <div class="view active" id="view-overview">
-    <div class="kpi-row" id="kpiRow"></div>
+    <div class="krow" id="kRow"></div>
     <div class="g13">
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Minutes — Stacked by Member</div><canvas class="tall" id="c-stack"></canvas></div>
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Minutes Stacked</div><canvas class="tall" id="c-stack"></canvas></div>
       <div class="card"><div class="ctitle"><span class="cdot"></span>Effort Share</div><canvas id="c-donut"></canvas></div>
     </div>
     <div class="g3">
@@ -191,358 +158,197 @@ canvas.mini{max-height:75px;margin-top:8px;}
       <div class="card"><div class="ctitle"><span class="cdot"></span>VINs Reviewed vs Impacted</div><canvas id="c-vins"></canvas></div>
       <div class="card"><div class="ctitle"><span class="cdot"></span>Review Type Split</div><canvas id="c-type"></canvas></div>
     </div>
-
     <div class="g2">
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily VINs Trend</div><canvas id="c-dailyvins"></canvas></div>
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Tasks</div><canvas id="c-dailytasks"></canvas></div>
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily VINs Trend</div><canvas id="c-dvins"></canvas></div>
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Tasks</div><canvas id="c-dtasks"></canvas></div>
     </div>
   </div>
-  <!-- MEMBERS -->
   <div class="view" id="view-members">
-    <div class="kpi-row" id="memberKpiRow"></div>
+    <div class="krow" id="mKRow"></div>
     <div class="sec"><span class="cdot"></span>Individual Performance</div>
-    <div class="mgrid" id="memberCardGrid"></div>
+    <div class="mgrid" id="mGrid"></div>
     <div class="g2">
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Hours per Member</div><canvas class="tall" id="c-heatbar"></canvas></div>
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Impact Rate % per Member</div><canvas id="c-impactrate"></canvas></div>
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Hours per Member</div><canvas class="tall" id="c-heat"></canvas></div>
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Efficiency % per Member</div><canvas id="c-eff"></canvas></div>
     </div>
   </div>
-  <!-- DAILY -->
   <div class="view" id="view-daily">
-    <div class="g2" style="margin-bottom:18px">
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Hours Trend</div><canvas id="c-dailyline"></canvas></div>
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily VINs Bar</div><canvas id="c-dailybar"></canvas></div>
+    <div class="g2" style="margin-bottom:16px">
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Hours Trend</div><canvas id="c-dline"></canvas></div>
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily VINs Bar</div><canvas id="c-dbar"></canvas></div>
     </div>
     <div class="sec"><span class="cdot"></span>Day-by-Day Cards</div>
-    <div class="drow" id="dailyCardRow"></div>
+    <div class="drow" id="dRow"></div>
   </div>
-  <!-- WEEKLY -->
   <div class="view" id="view-weekly">
-    <div class="g2" style="margin-bottom:18px">
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Week Comparison — Hours</div><canvas id="c-weekcomp"></canvas></div>
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Week Comparison — VINs</div><canvas id="c-weekvins"></canvas></div>
+    <div class="g2" style="margin-bottom:16px">
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Week Comparison — Hours</div><canvas id="c-wcomp"></canvas></div>
+      <div class="card"><div class="ctitle"><span class="cdot"></span>Week Comparison — VINs</div><canvas id="c-wvins"></canvas></div>
     </div>
-    <div id="weekCardCont"></div>
+    <div id="wCont"></div>
   </div>
 </div>
+<div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════
-const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRl_3g25PgrDGOBIcwKh_U7IIowogVtUFmmqtUKnLUKR2S4zxjkly29RUD9_T8I_tvZ5Mam5Y9RqKFF/pub?gid=421286318&single=true&output=csv';
+// ═══════════════════════════════════════
+// EMBEDDED DATA — 239 rows, loads instantly
+// ═══════════════════════════════════════
+const RAW = [{"date":"15-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":196.0,"mins":20.0,"imp":99.0},{"date":"15-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":1628.0,"mins":78.0,"imp":306.0},{"date":"15-Jun-26","worker":"Vijay","type":"Website Deep Review","vins":169.0,"mins":115.0,"imp":61.0},{"date":"15-Jun-26","worker":"Vijay","type":"Website Deep Review","vins":1626.0,"mins":971.0,"imp":315.0},{"date":"15-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2568.0,"mins":101.0,"imp":351.0},{"date":"15-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2568.0,"mins":101.0,"imp":351.0},{"date":"15-Jun-26","worker":"Khushi","type":"Website Deep Review","vins":249.0,"mins":195.0,"imp":141.0},{"date":"15-Jun-26","worker":"Khushi","type":"Website Deep Review","vins":249.0,"mins":195.0,"imp":141.0},{"date":"15-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":3.0,"imp":8.0},{"date":"15-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":2.0,"imp":1.0},{"date":"16-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2594.0,"mins":108.0,"imp":386.0},{"date":"16-Jun-26","worker":"Shweta Gupta","type":"Console Lite Review","vins":98.0,"mins":4.0,"imp":14.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"QC","vins":999.0,"mins":26.0,"imp":54.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"QC","vins":1000.0,"mins":26.0,"imp":56.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":228.0,"mins":12.0,"imp":49.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":385.0,"mins":18.0,"imp":70.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":241.0,"mins":16.0,"imp":70.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":526.0,"mins":36.0,"imp":165.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":404.0,"mins":25.0,"imp":112.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":443.0,"mins":22.0,"imp":88.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":643.0,"mins":72.0,"imp":369.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":325.0,"mins":26.0,"imp":122.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":422.0,"mins":44.0,"imp":224.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":350.0,"mins":19.0,"imp":77.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":3.0,"imp":8.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":2.0,"imp":1.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":2.0,"imp":1.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":4223.0,"mins":70.0,"imp":0.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":912.0,"mins":86.0,"imp":423.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":160.0,"mins":10.0,"imp":46.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":936.0,"mins":75.0,"imp":357.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":893.0,"mins":73.0,"imp":349.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":1322.0,"mins":114.0,"imp":553.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":368.0,"mins":21.0,"imp":90.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":178.0,"mins":11.0,"imp":49.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":420.0,"mins":38.0,"imp":187.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":378.0,"mins":10.0,"imp":24.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":598.0,"mins":29.0,"imp":112.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":458.0,"mins":20.0,"imp":76.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":519.0,"mins":66.0,"imp":344.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":367.0,"mins":43.0,"imp":224.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":459.0,"mins":47.0,"imp":236.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":836.0,"mins":123.0,"imp":655.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":835.0,"mins":122.0,"imp":651.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":215.0,"mins":10.0,"imp":38.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":405.0,"mins":52.0,"imp":270.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":182.0,"mins":20.0,"imp":100.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":248.0,"mins":19.0,"imp":89.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":233.0,"mins":19.0,"imp":89.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":370.0,"mins":39.0,"imp":194.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":1055.0,"mins":57.0,"imp":238.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":836.0,"mins":44.0,"imp":180.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":835.0,"mins":44.0,"imp":179.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":65.0,"mins":4.0,"imp":20.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":1013.0,"mins":54.0,"imp":222.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":330.0,"mins":52.0,"imp":279.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":425.0,"mins":59.0,"imp":313.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":321.0,"mins":18.0,"imp":78.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":161.0,"mins":20.0,"imp":106.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":241.0,"mins":32.0,"imp":166.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":526.0,"mins":70.0,"imp":368.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":385.0,"mins":59.0,"imp":315.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":287.0,"mins":24.0,"imp":114.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":443.0,"mins":21.0,"imp":82.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":350.0,"mins":18.0,"imp":75.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":409.0,"mins":59.0,"imp":312.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":321.0,"mins":32.0,"imp":161.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":421.0,"mins":54.0,"imp":281.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":432.0,"mins":46.0,"imp":232.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":611.0,"mins":82.0,"imp":433.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":458.0,"mins":21.0,"imp":80.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":597.0,"mins":31.0,"imp":126.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":177.0,"mins":13.0,"imp":63.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":419.0,"mins":39.0,"imp":190.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":368.0,"mins":21.0,"imp":91.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":228.0,"mins":12.0,"imp":48.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":349.0,"mins":10.0,"imp":28.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2502.0,"mins":87.0,"imp":270.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":1000.0,"mins":28.0,"imp":70.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":364.0,"mins":40.0,"imp":201.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":247.0,"mins":19.0,"imp":91.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":330.0,"mins":53.0,"imp":282.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":417.0,"mins":58.0,"imp":308.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":99.0,"mins":6.0,"imp":27.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":317.0,"mins":18.0,"imp":75.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":162.0,"mins":21.0,"imp":108.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":186.0,"mins":21.0,"imp":109.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":63.0,"mins":5.0,"imp":21.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":407.0,"mins":53.0,"imp":275.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":331.0,"mins":44.0,"imp":230.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":1051.0,"mins":55.0,"imp":224.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":238.0,"mins":21.0,"imp":101.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":219.0,"mins":12.0,"imp":53.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":1005.0,"mins":52.0,"imp":214.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":831.0,"mins":44.0,"imp":181.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":819.0,"mins":42.0,"imp":168.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2498.0,"mins":67.0,"imp":155.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"QC","vins":999.0,"mins":30.0,"imp":83.0},{"date":"17-Jun-26","worker":"Karmendra Singh","type":"QC","vins":2500.0,"mins":103.0,"imp":516.0},{"date":"17-Jun-26","worker":"Karmendra Singh","type":"QC","vins":1000.0,"mins":53.0,"imp":216.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2500.0,"mins":105.0,"imp":381.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2845.0,"mins":136.0,"imp":568.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2652.0,"mins":101.0,"imp":343.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2653.0,"mins":102.0,"imp":346.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"Console Lite Review","vins":342.0,"mins":8.0,"imp":13.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":10317.0,"mins":172.0,"imp":0.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":2499.0,"mins":113.0,"imp":426.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":2500.0,"mins":80.0,"imp":231.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":2501.0,"mins":85.0,"imp":259.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":2817.0,"mins":107.0,"imp":361.0},{"date":"18-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2716.0,"mins":107.0,"imp":369.0},{"date":"18-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":54.0,"imp":126.0},{"date":"18-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":66.0,"imp":196.0},{"date":"18-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":70.0,"imp":222.0},{"date":"18-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":48.0,"imp":87.0},{"date":"18-Jun-26","worker":"Tannu Kumari","type":"QC","vins":1001.0,"mins":45.0,"imp":68.0},{"date":"18-Jun-26","worker":"Tannu Kumari","type":"QC","vins":1009.0,"mins":31.0,"imp":86.0},{"date":"18-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":61.0,"imp":266.0},{"date":"18-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2364.0,"mins":39.0,"imp":0.0},{"date":"18-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":80.0,"imp":244.0},{"date":"18-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":133.0,"imp":596.0},{"date":"18-Jun-26","worker":"Khushi","type":"QC","vins":2063.0,"mins":94.0,"imp":365.0},{"date":"18-Jun-26","worker":"Khushi","type":"QC","vins":2094.0,"mins":35.0,"imp":0.0},{"date":"18-Jun-26","worker":"Shweta Gupta","type":"Sequencing - Console","vins":80.0,"mins":160.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":640.0,"mins":1.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":445.0,"mins":7.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":640.0,"mins":7.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"Console Deep Review","vins":0.0,"mins":0.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"Website Deep Review","vins":559.0,"mins":360.0,"imp":161.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":59.0,"imp":155.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":1028.0,"mins":44.0,"imp":61.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"Sequencing - Console","vins":31.0,"mins":62.0,"imp":0.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2724.0,"mins":107.0,"imp":372.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":93.0,"imp":360.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":97.0,"imp":383.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":103.0,"mins":6.0,"imp":27.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":336.0,"mins":46.0,"imp":240.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":221.0,"mins":14.0,"imp":61.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":106.0,"mins":11.0,"imp":53.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":73.0,"mins":9.0,"imp":44.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":244.0,"mins":20.0,"imp":94.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":238.0,"mins":7.0,"imp":16.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":252.0,"mins":28.0,"imp":142.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":993.0,"mins":48.0,"imp":191.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":125.0,"mins":6.0,"imp":21.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":72.0,"mins":5.0,"imp":22.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":27.0,"mins":3.0,"imp":15.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":214.0,"mins":39.0,"imp":214.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":281.0,"mins":51.0,"imp":280.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":183.0,"mins":10.7,"imp":46.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":161.0,"mins":19.5,"imp":101.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":71.2,"imp":227.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":65.8,"imp":195.0},{"date":"19-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":528.0,"mins":57.3,"imp":291.0},{"date":"19-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":37.0,"imp":19.0},{"date":"19-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":111.0,"imp":466.0},{"date":"19-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":122.0,"imp":534.0},{"date":"19-Jun-26","worker":"Karmendra Singh","type":"Console Upload","vins":62.0,"mins":5.2,"imp":0.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":1417.0,"mins":176.0,"imp":914.0},{"date":"20-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":40.0,"imp":96.0},{"date":"20-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":58.0,"imp":150.0},{"date":"20-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":53.0,"imp":117.0},{"date":"20-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":51.0,"imp":106.0},{"date":"20-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":64.0,"imp":184.0},{"date":"20-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":59.0,"imp":154.0},{"date":"20-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":2000.0,"mins":100.3,"imp":402.0},{"date":"20-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":2000.0,"mins":131.5,"imp":589.0},{"date":"20-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":2000.0,"mins":91.7,"imp":350.0},{"date":"20-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2726.0,"mins":107.4,"imp":372.0},{"date":"20-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":55.0,"imp":129.0},{"date":"20-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":73.0,"imp":235.0},{"date":"20-Jun-26","worker":"Shweta Gupta","type":"QC","vins":1097.0,"mins":25.0,"imp":39.0},{"date":"22-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2680.0,"mins":100.7,"imp":336.0},{"date":"22-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":191.0,"mins":21.7,"imp":111.0},{"date":"22-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":600.0,"mins":71.7,"imp":370.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":127.0,"mins":7.0,"imp":29.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":174.0,"mins":12.7,"imp":59.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":405.0,"mins":22.6,"imp":95.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":390.0,"mins":26.7,"imp":121.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":446.0,"mins":39.3,"imp":191.0},{"date":"22-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":384.0,"mins":48.6,"imp":253.0},{"date":"22-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":241.0,"mins":18.7,"imp":88.0},{"date":"22-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":527.0,"mins":34.8,"imp":156.0},{"date":"22-Jun-26","worker":"Karmendra Singh","type":"Website Lite Review","vins":1350.0,"mins":54.0,"imp":189.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":30.0,"mins":1.5,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":35.0,"mins":1.75,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":35.0,"mins":1.75,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":5.0,"mins":0.25,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":15.0,"mins":0.75,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":20.0,"mins":1.0,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":15.0,"mins":0.75,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":5.0,"mins":0.25,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":30.0,"mins":1.5,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":35.0,"mins":1.75,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":15.0,"mins":0.75,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":10.0,"mins":0.5,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":10.0,"mins":0.5,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":45.0,"mins":2.25,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":232.0,"mins":3.9,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":107.0,"mins":1.8,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":25.0,"mins":1.25,"imp":0.0},{"date":"23-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2711.0,"mins":112.2,"imp":402.0},{"date":"23-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":1128.0,"mins":97.0,"imp":469.0},{"date":"23-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":152.0,"mins":11.2,"imp":52.0},{"date":"23-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":65.0,"mins":2.8,"imp":10.0},{"date":"23-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":526.0,"mins":47.8,"imp":234.0},{"date":"23-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":702.0,"mins":61.9,"imp":301.0},{"date":"23-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":92.0,"mins":7.7,"imp":37.0},{"date":"23-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":380.0,"mins":20.7,"imp":86.0},{"date":"23-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":525.0,"mins":68.4,"imp":358.0},{"date":"23-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":165.0,"mins":16.9,"imp":85.0},{"date":"23-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":0.0,"mins":0.0,"imp":0.0},{"date":"23-Jun-26","worker":"Karmendra Singh","type":"Website Lite Review","vins":249.0,"mins":190.7,"imp":1119.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":36.0,"mins":3.1,"imp":15.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":407.0,"mins":52.8,"imp":276.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":362.0,"mins":34.5,"imp":171.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":574.0,"mins":31.7,"imp":133.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":357.0,"mins":11.6,"imp":34.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":389.0,"mins":8.8,"imp":14.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website URL searching","vins":25.0,"mins":75.0,"imp":0.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":137.0,"mins":4.1,"imp":11.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":231.0,"mins":4.2,"imp":2.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":110.0,"mins":2.5,"imp":4.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2703.0,"mins":105.6,"imp":363.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":90.0,"imp":271.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":81.0,"imp":284.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":88.0,"imp":326.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":576.0,"mins":50.8,"imp":247.0},{"date":"24-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":490.0,"mins":57.8,"imp":298.0},{"date":"24-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":152.0,"imp":710.0},{"date":"24-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":131.0,"imp":588.0},{"date":"24-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":442.0,"mins":47.2,"imp":239.0},{"date":"24-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":93.0,"imp":359.0},{"date":"24-Jun-26","worker":"Sumit Rana","type":"Website Lite Review","vins":65.0,"mins":2.1,"imp":6.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":63.2,"imp":179.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2415.0,"mins":73.9,"imp":202.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":1896.0,"mins":53.1,"imp":129.0},{"date":"24-Jun-26","worker":"Karmendra Singh","type":"Website Lite Review","vins":540.0,"mins":19.2,"imp":61.0},{"date":"24-Jun-26","worker":"Karmendra Singh","type":"Website Lite Review","vins":359.0,"mins":17.2,"imp":67.0}];
 
-// Factor lookup from Targets tab (VINs × Factor(seconds) / 60 = expected minutes)
-// Embedded from Targets CSV — also fetched live if Targets tab published
-let FACTORS = {
-  'Website Lite Review - Tool': 1.5,
-  'Website Lite Review - url':  2.5,
-  'Website Lite Review':        1.5,
-  'Website Deep Review':        60,
-  'Website Deep Review ':       60,
-  'Console Lite Review':        1.5,
-  'QC':                         1.5,
-  'Sequencing - Console':       60,
-  'Console Deep Review':        60,
-  'Console Upload':             60,
-  'Website URL searching':      30,
-  'Catalog':                    120,
-  'VIN Migration':              120,
+// ═══════════════════════════════════════
+// FACTORS (from Targets tab)
+// ═══════════════════════════════════════
+const FACTORS = {
+  'Website Lite Review - Tool':1.5,'Website Lite Review - url':2.5,
+  'Website Lite Review':1.5,'Website Deep Review':60,'Website Deep Review ':60,
+  'Console Lite Review':1.5,'QC':1.5,'Sequencing - Console':60,
+  'Console Deep Review':60,'Console Upload':60,'Website URL searching':30,
+  'Catalog':120,'VIN Migration':120
 };
+function getFactor(t){
+  const k=Object.keys(FACTORS).find(k=>t===k||t.toLowerCase()===k.toLowerCase());
+  return k?FACTORS[k]:1.5;
+}
+function expMins(type,vins){return vins*getFactor(type)/60;}
 
-function getExpectedMins(reviewType, vins) {
-  const t = (reviewType||'').trim();
-  // exact match first, then fuzzy
-  let factor = FACTORS[t];
-  if (!factor) {
-    const key = Object.keys(FACTORS).find(k => t.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(t.toLowerCase()));
-    factor = key ? FACTORS[key] : 1.5;
+// ═══════════════════════════════════════
+// COLORS
+// ═══════════════════════════════════════
+const PAL=['#ff1744','#ff6d00','#d500f9','#00e5ff','#76ff03','#ffea00','#ff4081','#00bcd4','#8bc34a','#ffc107'];
+const CM={};let ci=0;
+function gc(n){if(!CM[n]){CM[n]=PAL[ci%PAL.length];ci++;}return CM[n];}
+const EMO=['👑','⭐','🌟','💫','🔥','✨','🎯','🚀'];
+
+// ═══════════════════════════════════════
+// CHARTS REGISTRY
+// ═══════════════════════════════════════
+const CHS={};
+Chart.defaults.color='#6b6e85';
+Chart.defaults.borderColor='rgba(255,255,255,.06)';
+Chart.defaults.font.family='Inter';
+const G={color:'rgba(255,255,255,.06)'};
+function mkC(id,type,data,opts){
+  if(CHS[id]){CHS[id].destroy();delete CHS[id];}
+  const el=document.getElementById(id);if(!el)return;
+  CHS[id]=new Chart(el,{type,data,options:{responsive:true,maintainAspectRatio:true,...opts}});
+}
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-IN',{hour12:false});},1000);
+function sv(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function showToast(msg,d=3500){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',d);}
+function effColor(r){return r<=1?'#76ff03':r<=1.5?'#ffea00':'#ff4444';}
+
+// ═══════════════════════════════════════
+// CSV PARSER (for live sync)
+// ═══════════════════════════════════════
+function parseCSV(txt){
+  const lines=txt.replace(/\r/g,'').trim().split('\n');
+  const headers=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+  return lines.slice(1).filter(l=>l.trim()).map(line=>{
+    const vals=[];let cur='',inQ=false;
+    for(const c of line){if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){vals.push(cur);cur='';}else{cur+=c;}}
+    vals.push(cur);
+    const o={};headers.forEach((h,i)=>o[h]=(vals[i]||'').replace(/^"|"$/g,'').trim());
+    return o;
+  });
+}
+function n(v){return parseFloat((v||'0').replace(/,/g,''))||0;}
+
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
+function render(rows){
+  // normalize if raw CSV
+  let data=rows;
+  if(rows.length&&rows[0].date===undefined){
+    const ks=Object.keys(rows[0]);
+    const fk=(...p)=>ks.find(k=>p.some(p=>k.toLowerCase().replace(/\s/g,'').includes(p.toLowerCase().replace(/\s/g,'')))||'')||'';
+    const dk=fk('Date'),wk=fk('Workdoneby','Worker'),mk=fk('Minutesdone','Minutes'),vk=fk('VINs','Vin'),ik=fk('ImpactedVINs','Impacted'),tk=fk('ReviewType','Type');
+    data=rows.map(r=>({
+      date:(r[dk]||'').replace(/june/gi,'Jun').replace(/\s+/g,' ').trim(),
+      worker:(r[wk]||'').trim(),
+      type:(r[tk]||'').trim(),
+      mins:n(r[mk]),vins:n(r[vk]),imp:n(r[ik])
+    })).filter(r=>r.worker&&r.date);
   }
-  return (vins * factor) / 60;
-}
+  data.forEach(r=>{r.exp=expMins(r.type,r.vins);});
 
-// ══ ALL DATA EMBEDDED — loads instantly, no network needed ══
-const ALL_DATA = [{"date":"15-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":196.0,"mins":20.0,"imp":99.0},{"date":"15-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":1628.0,"mins":78.0,"imp":306.0},{"date":"15-Jun-26","worker":"Vijay","type":"Website Deep Review","vins":169.0,"mins":115.0,"imp":61.0},{"date":"15-Jun-26","worker":"Vijay","type":"Website Deep Review","vins":1626.0,"mins":971.0,"imp":315.0},{"date":"15-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2568.0,"mins":101.0,"imp":351.0},{"date":"15-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2568.0,"mins":101.0,"imp":351.0},{"date":"15-Jun-26","worker":"Khushi","type":"Website Deep Review","vins":249.0,"mins":195.0,"imp":141.0},{"date":"15-Jun-26","worker":"Khushi","type":"Website Deep Review","vins":249.0,"mins":195.0,"imp":141.0},{"date":"15-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":3.0,"imp":8.0},{"date":"15-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":2.0,"imp":1.0},{"date":"16-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2594.0,"mins":108.0,"imp":386.0},{"date":"16-Jun-26","worker":"Shweta Gupta","type":"Console Lite Review","vins":98.0,"mins":4.0,"imp":14.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"QC","vins":999.0,"mins":26.0,"imp":54.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"QC","vins":1000.0,"mins":26.0,"imp":56.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":228.0,"mins":12.0,"imp":49.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":385.0,"mins":18.0,"imp":70.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":241.0,"mins":16.0,"imp":70.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":526.0,"mins":36.0,"imp":165.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":404.0,"mins":25.0,"imp":112.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":443.0,"mins":22.0,"imp":88.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":643.0,"mins":72.0,"imp":369.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":325.0,"mins":26.0,"imp":122.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":422.0,"mins":44.0,"imp":224.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":350.0,"mins":19.0,"imp":77.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":3.0,"imp":8.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":2.0,"imp":1.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":116.0,"mins":2.0,"imp":1.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":4223.0,"mins":70.0,"imp":0.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":912.0,"mins":86.0,"imp":423.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":160.0,"mins":10.0,"imp":46.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":936.0,"mins":75.0,"imp":357.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":893.0,"mins":73.0,"imp":349.0},{"date":"16-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":1322.0,"mins":114.0,"imp":553.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":368.0,"mins":21.0,"imp":90.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":178.0,"mins":11.0,"imp":49.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":420.0,"mins":38.0,"imp":187.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":378.0,"mins":10.0,"imp":24.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":598.0,"mins":29.0,"imp":112.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":458.0,"mins":20.0,"imp":76.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":519.0,"mins":66.0,"imp":344.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":367.0,"mins":43.0,"imp":224.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":459.0,"mins":47.0,"imp":236.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":836.0,"mins":123.0,"imp":655.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":835.0,"mins":122.0,"imp":651.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":215.0,"mins":10.0,"imp":38.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":405.0,"mins":52.0,"imp":270.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":182.0,"mins":20.0,"imp":100.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":248.0,"mins":19.0,"imp":89.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":233.0,"mins":19.0,"imp":89.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":370.0,"mins":39.0,"imp":194.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":1055.0,"mins":57.0,"imp":238.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":836.0,"mins":44.0,"imp":180.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":835.0,"mins":44.0,"imp":179.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":65.0,"mins":4.0,"imp":20.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":1013.0,"mins":54.0,"imp":222.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":330.0,"mins":52.0,"imp":279.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":425.0,"mins":59.0,"imp":313.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":321.0,"mins":18.0,"imp":78.0},{"date":"16-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":161.0,"mins":20.0,"imp":106.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":241.0,"mins":32.0,"imp":166.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":526.0,"mins":70.0,"imp":368.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":385.0,"mins":59.0,"imp":315.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":287.0,"mins":24.0,"imp":114.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":443.0,"mins":21.0,"imp":82.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":350.0,"mins":18.0,"imp":75.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":409.0,"mins":59.0,"imp":312.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":321.0,"mins":32.0,"imp":161.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":421.0,"mins":54.0,"imp":281.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":432.0,"mins":46.0,"imp":232.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":611.0,"mins":82.0,"imp":433.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":458.0,"mins":21.0,"imp":80.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":597.0,"mins":31.0,"imp":126.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":177.0,"mins":13.0,"imp":63.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":419.0,"mins":39.0,"imp":190.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":368.0,"mins":21.0,"imp":91.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":228.0,"mins":12.0,"imp":48.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":349.0,"mins":10.0,"imp":28.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2502.0,"mins":87.0,"imp":270.0},{"date":"17-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":1000.0,"mins":28.0,"imp":70.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":364.0,"mins":40.0,"imp":201.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":247.0,"mins":19.0,"imp":91.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":330.0,"mins":53.0,"imp":282.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":417.0,"mins":58.0,"imp":308.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":99.0,"mins":6.0,"imp":27.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":317.0,"mins":18.0,"imp":75.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":162.0,"mins":21.0,"imp":108.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":186.0,"mins":21.0,"imp":109.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":63.0,"mins":5.0,"imp":21.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":407.0,"mins":53.0,"imp":275.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":331.0,"mins":44.0,"imp":230.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":1051.0,"mins":55.0,"imp":224.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":238.0,"mins":21.0,"imp":101.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":219.0,"mins":12.0,"imp":53.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":1005.0,"mins":52.0,"imp":214.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":831.0,"mins":44.0,"imp":181.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":819.0,"mins":42.0,"imp":168.0},{"date":"17-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2498.0,"mins":67.0,"imp":155.0},{"date":"16-Jun-26","worker":"Tannu Kumari","type":"QC","vins":999.0,"mins":30.0,"imp":83.0},{"date":"17-Jun-26","worker":"Karmendra Singh","type":"QC","vins":2500.0,"mins":103.0,"imp":516.0},{"date":"17-Jun-26","worker":"Karmendra Singh","type":"QC","vins":1000.0,"mins":53.0,"imp":216.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2500.0,"mins":105.0,"imp":381.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2845.0,"mins":136.0,"imp":568.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2652.0,"mins":101.0,"imp":343.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2653.0,"mins":102.0,"imp":346.0},{"date":"17-Jun-26","worker":"Shweta Gupta","type":"Console Lite Review","vins":342.0,"mins":8.0,"imp":13.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":10317.0,"mins":172.0,"imp":0.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":2499.0,"mins":113.0,"imp":426.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":2500.0,"mins":80.0,"imp":231.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":2501.0,"mins":85.0,"imp":259.0},{"date":"17-Jun-26","worker":"Khushi","type":"QC","vins":2817.0,"mins":107.0,"imp":361.0},{"date":"18-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2716.0,"mins":107.0,"imp":369.0},{"date":"18-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":54.0,"imp":126.0},{"date":"18-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":66.0,"imp":196.0},{"date":"18-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":70.0,"imp":222.0},{"date":"18-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":48.0,"imp":87.0},{"date":"18-Jun-26","worker":"Tannu Kumari","type":"QC","vins":1001.0,"mins":45.0,"imp":68.0},{"date":"18-Jun-26","worker":"Tannu Kumari","type":"QC","vins":1009.0,"mins":31.0,"imp":86.0},{"date":"18-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":61.0,"imp":266.0},{"date":"18-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2364.0,"mins":39.0,"imp":0.0},{"date":"18-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":80.0,"imp":244.0},{"date":"18-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":133.0,"imp":596.0},{"date":"18-Jun-26","worker":"Khushi","type":"QC","vins":2063.0,"mins":94.0,"imp":365.0},{"date":"18-Jun-26","worker":"Khushi","type":"QC","vins":2094.0,"mins":35.0,"imp":0.0},{"date":"18-Jun-26","worker":"Shweta Gupta","type":"Sequencing - Console","vins":80.0,"mins":160.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":640.0,"mins":1.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":445.0,"mins":7.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":640.0,"mins":7.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"Console Deep Review","vins":0.0,"mins":0.0,"imp":0.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"Website Deep Review","vins":559.0,"mins":360.0,"imp":161.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":59.0,"imp":155.0},{"date":"19-Jun-26","worker":"Tannu Kumari","type":"QC","vins":1028.0,"mins":44.0,"imp":61.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"Sequencing - Console","vins":31.0,"mins":62.0,"imp":0.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2724.0,"mins":107.0,"imp":372.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":93.0,"imp":360.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":97.0,"imp":383.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":103.0,"mins":6.0,"imp":27.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":336.0,"mins":46.0,"imp":240.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":221.0,"mins":14.0,"imp":61.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":106.0,"mins":11.0,"imp":53.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":73.0,"mins":9.0,"imp":44.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":244.0,"mins":20.0,"imp":94.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":238.0,"mins":7.0,"imp":16.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":252.0,"mins":28.0,"imp":142.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":993.0,"mins":48.0,"imp":191.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":125.0,"mins":6.0,"imp":21.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":72.0,"mins":5.0,"imp":22.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":27.0,"mins":3.0,"imp":15.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":214.0,"mins":39.0,"imp":214.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":281.0,"mins":51.0,"imp":280.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":183.0,"mins":10.7,"imp":46.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":161.0,"mins":19.5,"imp":101.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":71.2,"imp":227.0},{"date":"19-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":65.8,"imp":195.0},{"date":"19-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":528.0,"mins":57.3,"imp":291.0},{"date":"19-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":37.0,"imp":19.0},{"date":"19-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":111.0,"imp":466.0},{"date":"19-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":122.0,"imp":534.0},{"date":"19-Jun-26","worker":"Karmendra Singh","type":"Console Upload","vins":62.0,"mins":5.2,"imp":0.0},{"date":"19-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":1417.0,"mins":176.0,"imp":914.0},{"date":"20-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":40.0,"imp":96.0},{"date":"20-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":58.0,"imp":150.0},{"date":"20-Jun-26","worker":"Tannu Kumari","type":"QC","vins":2000.0,"mins":53.0,"imp":117.0},{"date":"20-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":51.0,"imp":106.0},{"date":"20-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":64.0,"imp":184.0},{"date":"20-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":59.0,"imp":154.0},{"date":"20-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":2000.0,"mins":100.3,"imp":402.0},{"date":"20-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":2000.0,"mins":131.5,"imp":589.0},{"date":"20-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":2000.0,"mins":91.7,"imp":350.0},{"date":"20-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2726.0,"mins":107.4,"imp":372.0},{"date":"20-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":55.0,"imp":129.0},{"date":"20-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":73.0,"imp":235.0},{"date":"20-Jun-26","worker":"Shweta Gupta","type":"QC","vins":1097.0,"mins":25.0,"imp":39.0},{"date":"22-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2680.0,"mins":100.7,"imp":336.0},{"date":"22-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":191.0,"mins":21.7,"imp":111.0},{"date":"22-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":600.0,"mins":71.7,"imp":370.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":127.0,"mins":7.0,"imp":29.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":174.0,"mins":12.7,"imp":59.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":405.0,"mins":22.6,"imp":95.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":390.0,"mins":26.7,"imp":121.0},{"date":"22-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":446.0,"mins":39.3,"imp":191.0},{"date":"22-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":384.0,"mins":48.6,"imp":253.0},{"date":"22-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":241.0,"mins":18.7,"imp":88.0},{"date":"22-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":527.0,"mins":34.8,"imp":156.0},{"date":"22-Jun-26","worker":"Karmendra Singh","type":"Website Lite Review","vins":1350.0,"mins":54.0,"imp":189.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":30.0,"mins":1.5,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":35.0,"mins":1.75,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":35.0,"mins":1.75,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":5.0,"mins":0.25,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":15.0,"mins":0.75,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":20.0,"mins":1.0,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":15.0,"mins":0.75,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":5.0,"mins":0.25,"imp":0.0},{"date":"22-Jun-26","worker":"Vijay","type":"Website URL searching","vins":30.0,"mins":1.5,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":35.0,"mins":1.75,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":15.0,"mins":0.75,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":10.0,"mins":0.5,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":10.0,"mins":0.5,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":45.0,"mins":2.25,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":232.0,"mins":3.9,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":107.0,"mins":1.8,"imp":0.0},{"date":"23-Jun-26","worker":"Vijay","type":"Website URL searching","vins":25.0,"mins":1.25,"imp":0.0},{"date":"23-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2711.0,"mins":112.2,"imp":402.0},{"date":"23-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":1128.0,"mins":97.0,"imp":469.0},{"date":"23-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":152.0,"mins":11.2,"imp":52.0},{"date":"23-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":65.0,"mins":2.8,"imp":10.0},{"date":"23-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":526.0,"mins":47.8,"imp":234.0},{"date":"23-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":702.0,"mins":61.9,"imp":301.0},{"date":"23-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":92.0,"mins":7.7,"imp":37.0},{"date":"23-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":380.0,"mins":20.7,"imp":86.0},{"date":"23-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":525.0,"mins":68.4,"imp":358.0},{"date":"23-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":165.0,"mins":16.9,"imp":85.0},{"date":"23-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":0.0,"mins":0.0,"imp":0.0},{"date":"23-Jun-26","worker":"Karmendra Singh","type":"Website Lite Review","vins":249.0,"mins":190.7,"imp":1119.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":36.0,"mins":3.1,"imp":15.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":407.0,"mins":52.8,"imp":276.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":362.0,"mins":34.5,"imp":171.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":574.0,"mins":31.7,"imp":133.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":357.0,"mins":11.6,"imp":34.0},{"date":"24-Jun-26","worker":"Tannu Kumari","type":"Website Lite Review","vins":389.0,"mins":8.8,"imp":14.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website URL searching","vins":25.0,"mins":75.0,"imp":0.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":137.0,"mins":4.1,"imp":11.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":231.0,"mins":4.2,"imp":2.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":110.0,"mins":2.5,"imp":4.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":2703.0,"mins":105.6,"imp":363.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":90.0,"imp":271.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":81.0,"imp":284.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"QC","vins":2000.0,"mins":88.0,"imp":326.0},{"date":"24-Jun-26","worker":"Shweta Gupta","type":"Website Lite Review","vins":576.0,"mins":50.8,"imp":247.0},{"date":"24-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":490.0,"mins":57.8,"imp":298.0},{"date":"24-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":152.0,"imp":710.0},{"date":"24-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":131.0,"imp":588.0},{"date":"24-Jun-26","worker":"Khushi","type":"Website Lite Review","vins":442.0,"mins":47.2,"imp":239.0},{"date":"24-Jun-26","worker":"Khushi","type":"QC","vins":2000.0,"mins":93.0,"imp":359.0},{"date":"24-Jun-26","worker":"Sumit Rana","type":"Website Lite Review","vins":65.0,"mins":2.1,"imp":6.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2000.0,"mins":63.2,"imp":179.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":2415.0,"mins":73.9,"imp":202.0},{"date":"24-Jun-26","worker":"Vijay","type":"Website Lite Review","vins":1896.0,"mins":53.1,"imp":129.0},{"date":"24-Jun-26","worker":"Karmendra Singh","type":"Website Lite Review","vins":540.0,"mins":19.2,"imp":61.0},{"date":"24-Jun-26","worker":"Karmendra Singh","type":"Website Lite Review","vins":359.0,"mins":17.2,"imp":67.0}];
+  // sort dates
+  const pdate=s=>{const m=s.match(/(\d+)[-](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[-](\d+)/i);return m?new Date(`${m[2]} ${m[1]} 20${m[3].length===2?m[3]:m[3].slice(-2)}`):new Date(0);};
+  const dates=[...new Set(data.map(r=>r.date))].filter(d=>d.length>3).sort((a,b)=>pdate(a)-pdate(b));
+  const workers=[...new Set(data.map(r=>r.worker))].filter(Boolean);
 
-// Background sync from Google Sheets (non-blocking)
-const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRl_3g25PgrDGOBIcwKh_U7IIowogVtUFmmqtUKnLUKR2S4zxjkly29RUD9_T8I_tvZ5Mam5Y9RqKFF/pub?gid=421286318&single=true&output=csv';
-
-async function tryLiveSync() {
-  try {
-    const enc = encodeURIComponent(SHEET_CSV);
-    const proxies = [
-      `https://corsproxy.io/?${enc}`,
-      `https://api.allorigins.win/raw?url=${enc}`,
-      `https://api.codetabs.com/v1/proxy?quest=${enc}`,
-    ];
-    for (const url of proxies) {
-      try {
-        const resp = await Promise.race([
-          fetch(url, {cache:'no-cache'}),
-          new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),6000))
-        ]);
-        if (!resp.ok) continue;
-        const text = await resp.text();
-        if (!text || text.length < 100 || text.trim().startsWith('<')) continue;
-        const rows = parseCSV(text);
-        if (rows.length < 5) continue;
-        processAndRender(rows);
-        document.getElementById('rowCount').textContent = `Rows: ${rows.length} ✅ Live`;
-        document.getElementById('lastSync').textContent = `Live: ${new Date().toLocaleTimeString('en-IN',{hour12:false})}`;
-        document.getElementById('syncLabel').textContent = `✅ Live synced · ${rows.length} rows`;
-        showToast('✅ Live data loaded from Google Sheets!', 3000);
-        return;
-      } catch(e) { continue; }
-    }
-    throw new Error('all failed');
-  } catch(e) {
-    document.getElementById('syncLabel').textContent = '📦 Cached · Jun 15–24';
-    console.warn('Live sync failed, using embedded data');
-  }
-}
-
-function loadData() {
-  const btn = document.getElementById('syncBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Syncing...';
-
-  // Hide loader, show dashboard IMMEDIATELY with embedded data
-  document.getElementById('loader').style.display = 'none';
-  document.getElementById('mainWrap').style.display = 'block';
-
-  // Render embedded data instantly
-  const rows = ALL_DATA.map(r => ({
-    _date: r.date, _worker: r.worker, _type: r.type,
-    _mins: r.mins, _vins: r.vins, _imp: r.imp,
-    _expected: getExpectedMins(r.type, r.vins)
-  }));
-  processAndRender(rows);
-  document.getElementById('rowCount').textContent = `Rows: ${rows.length} (cached)`;
-  document.getElementById('lastSync').textContent = `Cached: Jun 15–24`;
-  document.getElementById('syncLabel').textContent = '📦 Cached data · trying live sync...';
-
-  // Try live sync in background — won't block anything
-  tryLiveSync().finally(() => {
-    btn.disabled = false;
-    btn.textContent = '🔄 Sync Now';
-  });
-}
-
-function showToast(msg, dur = 4000) {
-  let t = document.getElementById('toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'toast';
-    t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a0005;border:1px solid var(--red);color:#fff;padding:12px 20px;border-radius:10px;font-size:.8rem;z-index:9999;max-width:90vw;text-align:center;box-shadow:0 4px 20px var(--red-glow)';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.style.display = 'block';
-  setTimeout(() => { t.style.display = 'none'; }, dur);
-}
-
-// ══════════════════════════════════════════
-// PROCESS & RENDER
-// ══════════════════════════════════════════
-function processAndRender(rows) {
-  // If rows are already normalized (from cache), skip CSV parsing
-  if (rows.length && rows[0]._date !== undefined) {
-    rows = rows.filter(r => r._worker && r._date);
-  } else {
-  // Auto-detect column names (case-insensitive fuzzy match)
-  const sample = rows[0] || {};
-  const keys = Object.keys(sample);
-  const findKey = (...pats) => keys.find(k => pats.some(p => k.toLowerCase().replace(/\s+/g,'').includes(p.toLowerCase().replace(/\s+/g,'')))) || '';
-  const dateKey   = findKey('Date');
-  const workerKey = findKey('Workdoneby','Workby','Worker','Member','Name');
-  const minsKey   = findKey('Minutesdone','Minutes','Mins','Time');
-  const vinsKey   = findKey('VINs','Vin','Count');
-  const impKey    = findKey('ImpactedVINs','Impacted','Impact');
-  const typeKey   = findKey('ReviewType','Type','Review');
-  console.log('Columns detected:', {dateKey,workerKey,minsKey,vinsKey,impKey,typeKey});
-  console.log('All columns:', keys);
-
-  // Normalize
-  rows.forEach(r => {
-    r._date   = normDate(r[dateKey] || r['Date'] || r['date'] || '');
-    r._worker = (r[workerKey] || r['Work done by '] || r['Work done by'] || '').trim();
-    r._mins   = n(r[minsKey] || r['Minutes  done'] || r['Minutes done'] || r['Minutes'] || '0');
-    r._vins   = n(r[vinsKey] || r['VINs'] || '0');
-    r._imp    = n(r[impKey]  || r['Impacted VINs'] || '0');
-    r._type   = (r[typeKey]  || r['Review Type'] || '').trim();
-    r._expected = getExpectedMins(r._type, r._vins); // expected mins = VINs × Factor / 60
-  });
-  rows = rows.filter(r => r._worker && r._date);
-  console.log('Valid rows after filter:', rows.length, 'Sample:', rows[0]);
-  } // end else (raw CSV normalization)
-
-  // Sorted unique dates
-  const dateSet = [...new Set(rows.map(r => r._date))].filter(d=>d&&d.length>3).sort((a, b) => {
-    const p = s => {
-      const m = s.match(/(\d+)[-\s](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[-\s](\d+)/i);
-      if (!m) return 0;
-      const yr = m[3].length===2 ? '20'+m[3] : m[3];
-      return new Date(`${m[2]} ${m[1]} ${yr}`);
-    };
-    return p(a) - p(b);
-  });
-  console.log('Dates found:', dateSet.length, dateSet.slice(0,5));
-
-  const workerSet = [...new Set(rows.map(r => r._worker))].filter(Boolean);
-
-  // Build aggregations
-  const byWorker = {}, byDate = {}, byType = {};
-  workerSet.forEach(w => { byWorker[w] = { mins: 0, vins: 0, imp: 0, tasks: 0, exp: 0 }; getColor(w); });
-  dateSet.forEach(d => { byDate[d] = { mins: 0, vins: 0, imp: 0, tasks: 0, exp: 0, members: {} }; });
-
-  rows.forEach(r => {
-    if (!byWorker[r._worker]) byWorker[r._worker] = { mins: 0, vins: 0, imp: 0, tasks: 0, exp: 0 };
-    byWorker[r._worker].mins  += r._mins;
-    byWorker[r._worker].vins  += r._vins;
-    byWorker[r._worker].imp   += r._imp;
-    byWorker[r._worker].tasks++;
-    byWorker[r._worker].exp   += r._expected;
-
-    if (!byDate[r._date]) byDate[r._date] = { mins: 0, vins: 0, imp: 0, tasks: 0, exp: 0, members: {} };
-    byDate[r._date].mins  += r._mins;
-    byDate[r._date].vins  += r._vins;
-    byDate[r._date].imp   += r._imp;
-    byDate[r._date].tasks++;
-    byDate[r._date].exp   += r._expected;
-    if (!byDate[r._date].members[r._worker]) byDate[r._date].members[r._worker] = { mins: 0, vins: 0, imp: 0, tasks: 0, exp: 0 };
-    byDate[r._date].members[r._worker].mins  += r._mins;
-    byDate[r._date].members[r._worker].vins  += r._vins;
-    byDate[r._date].members[r._worker].imp   += r._imp;
-    byDate[r._date].members[r._worker].tasks++;
-    byDate[r._date].members[r._worker].exp   += r._expected;
-
-    if (r._type) {
-      if (!byType[r._type]) byType[r._type] = { mins: 0, tasks: 0 };
-      byType[r._type].mins  += r._mins;
-      byType[r._type].tasks++;
-    }
+  // aggregations
+  const bw={},bd={},bt={};
+  workers.forEach(w=>{bw[w]={mins:0,vins:0,imp:0,tasks:0,exp:0};gc(w);});
+  dates.forEach(d=>{bd[d]={mins:0,vins:0,imp:0,tasks:0,exp:0,m:{}};});
+  data.forEach(r=>{
+    if(!bw[r.worker])bw[r.worker]={mins:0,vins:0,imp:0,tasks:0,exp:0};
+    bw[r.worker].mins+=r.mins;bw[r.worker].vins+=r.vins;bw[r.worker].imp+=r.imp;bw[r.worker].tasks++;bw[r.worker].exp+=r.exp;
+    if(!bd[r.date])bd[r.date]={mins:0,vins:0,imp:0,tasks:0,exp:0,m:{}};
+    bd[r.date].mins+=r.mins;bd[r.date].vins+=r.vins;bd[r.date].imp+=r.imp;bd[r.date].tasks++;bd[r.date].exp+=r.exp;
+    if(!bd[r.date].m[r.worker])bd[r.date].m[r.worker]={mins:0,vins:0,imp:0,tasks:0,exp:0};
+    bd[r.date].m[r.worker].mins+=r.mins;bd[r.date].m[r.worker].vins+=r.vins;bd[r.date].m[r.worker].imp+=r.imp;bd[r.date].m[r.worker].tasks++;bd[r.date].m[r.worker].exp+=r.exp;
+    if(r.type){if(!bt[r.type])bt[r.type]={mins:0};bt[r.type].mins+=r.mins;}
   });
 
-  const totalMins  = Object.values(byWorker).reduce((s, w) => s + w.mins, 0);
-  const totalVins  = Object.values(byWorker).reduce((s, w) => s + w.vins, 0);
-  const totalImp   = Object.values(byWorker).reduce((s, w) => s + w.imp, 0);
-  const totalTasks = rows.length;
-  const totalExp   = Object.values(byWorker).reduce((s, w) => s + w.exp, 0);
-  const effPct     = totalExp > 0 ? (totalMins / totalExp * 100).toFixed(1) : '—';
+  const ws=Object.entries(bw).sort((a,b)=>b[1].mins-a[1].mins);
+  const totM=ws.reduce((s,[,d])=>s+d.mins,0);
+  const totV=ws.reduce((s,[,d])=>s+d.vins,0);
+  const totI=ws.reduce((s,[,d])=>s+d.imp,0);
+  const totE=ws.reduce((s,[,d])=>s+d.exp,0);
+  const totT=data.length;
+  const sdates=dates.map(d=>{const p=d.split('-');return p[0]+'-'+p[1];});
 
-  const wSorted = Object.entries(byWorker).sort((a, b) => b[1].mins - a[1].mins);
-  const shortDates = dateSet.map(d => { const p = d.split('-'); return p[0] + '-' + p[1]; });
-
-  // ── OVERVIEW KPIs ──
-  document.getElementById('kpiRow').innerHTML = `
-    <div class="kpi"><div class="kpi-icon">⏱</div><div class="kpi-lbl">Total Hours</div><div class="kpi-val">${(totalMins/60).toFixed(1)}h</div><div class="kpi-sub">${Math.round(totalMins).toLocaleString()} mins</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">🚗</div><div class="kpi-lbl">VINs Reviewed</div><div class="kpi-val">${totalVins>999?(totalVins/1000).toFixed(0)+'K':totalVins.toLocaleString()}</div><div class="kpi-sub">All rooftops</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">⚡</div><div class="kpi-lbl">Impacted VINs</div><div class="kpi-val">${totalImp.toLocaleString()}</div><div class="kpi-sub">${totalVins>0?(totalImp/totalVins*100).toFixed(1):0}% rate</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">✅</div><div class="kpi-lbl">Tasks Done</div><div class="kpi-val">${totalTasks.toLocaleString()}</div><div class="kpi-sub">${dateSet.length} active days</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">👥</div><div class="kpi-lbl">Team Size</div><div class="kpi-val">${wSorted.length}</div><div class="kpi-sub">Active members</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">🎯</div><div class="kpi-lbl">Efficiency</div><div class="kpi-val" style="-webkit-text-fill-color:${totalExp>0&&totalMins/totalExp<=1?'#76ff03':totalMins/totalExp<=1.5?'#ffea00':'#ff4444'}">${totalExp>0?(totalMins/totalExp*100).toFixed(0)+'%':'—'}</div><div class="kpi-sub">Actual vs Target</div><div class="kpi-glow"></div></div>`;
-`;
+  // ── KPIs ──
+  document.getElementById('kRow').innerHTML=`
+    <div class="kc"><div class="kc-icon">⏱</div><div class="kc-lbl">Total Hours</div><div class="kc-val">${(totM/60).toFixed(1)}h</div><div class="kc-sub">${Math.round(totM).toLocaleString()} mins</div><div class="kc-glow"></div></div>
+    <div class="kc"><div class="kc-icon">🚗</div><div class="kc-lbl">VINs Reviewed</div><div class="kc-val">${totV>999?(totV/1000).toFixed(0)+'K':totV.toLocaleString()}</div><div class="kc-sub">All rooftops</div><div class="kc-glow"></div></div>
+    <div class="kc"><div class="kc-icon">⚡</div><div class="kc-lbl">Impacted VINs</div><div class="kc-val">${totI.toLocaleString()}</div><div class="kc-sub">${totV>0?(totI/totV*100).toFixed(1):0}% rate</div><div class="kc-glow"></div></div>
+    <div class="kc"><div class="kc-icon">✅</div><div class="kc-lbl">Tasks Done</div><div class="kc-val">${totT.toLocaleString()}</div><div class="kc-sub">${dates.length} active days</div><div class="kc-glow"></div></div>
+    <div class="kc"><div class="kc-icon">👥</div><div class="kc-lbl">Team Size</div><div class="kc-val">${ws.length}</div><div class="kc-sub">Active members</div><div class="kc-glow"></div></div>`;
 
   // ── OVERVIEW CHARTS ──
-  mkChart('c-stack','bar',{
-    labels: shortDates,
-    datasets: wSorted.map(([w]) => ({
-      label: w, data: dateSet.map(d => (byDate[d].members[w]?.mins||0).toFixed(1)),
-      backgroundColor: getColor(w)+'cc', borderRadius:3, stack:'s'
-    }))
-  },{scales:{x:{stacked:true,grid:G},y:{stacked:true,grid:G}},plugins:{legend:{position:'right',labels:{boxWidth:9,font:{size:9}}}}});
+  mkC('c-stack','bar',{labels:sdates,datasets:ws.map(([w])=>({label:w,data:dates.map(d=>(bd[d].m[w]?.mins||0).toFixed(1)),backgroundColor:gc(w)+'cc',borderRadius:3,stack:'s'}))},{scales:{x:{stacked:true,grid:G},y:{stacked:true,grid:G}},plugins:{legend:{position:'right',labels:{boxWidth:8,font:{size:9}}}}});
+  mkC('c-donut','doughnut',{labels:ws.map(([w])=>w),datasets:[{data:ws.map(([,d])=>d.mins),backgroundColor:ws.map(([w])=>gc(w)),borderWidth:3,borderColor:'#111120'}]},{plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:8}}},cutout:'65%'});
+  mkC('c-hrs','bar',{labels:ws.map(([w])=>w),datasets:[{label:'Hours',data:ws.map(([,d])=>(d.mins/60).toFixed(1)),backgroundColor:ws.map(([w])=>gc(w)+'cc'),borderRadius:5,borderSkipped:false}]},{indexAxis:'y',scales:{x:{grid:G},y:{grid:{display:false}}},plugins:{legend:{display:false}}});
+  mkC('c-vins','bar',{labels:ws.map(([w])=>w.split(' ')[0]),datasets:[{label:'Reviewed',data:ws.map(([,d])=>d.vins),backgroundColor:ws.map(([w])=>gc(w)+'77'),borderRadius:4},{label:'Impacted',data:ws.map(([,d])=>d.imp),backgroundColor:ws.map(([w])=>gc(w)),borderRadius:4}]},{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:8}}}});
+  const ta=Object.entries(bt).sort((a,b)=>b[1].mins-a[1].mins).slice(0,7);
+  mkC('c-type','polarArea',{labels:ta.map(([t])=>t),datasets:[{data:ta.map(([,d])=>d.mins),backgroundColor:PAL.slice(0,ta.length).map(c=>c+'cc')}]},{plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:8}}}});
+  mkC('c-dvins','line',{labels:sdates,datasets:[{label:'VINs',data:dates.map(d=>bd[d].vins),borderColor:'#ff1744',backgroundColor:'rgba(255,23,68,.15)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#ff1744',pointBorderColor:'#fff',pointBorderWidth:2}]},{scales:{x:{grid:G},y:{grid:G}},plugins:{legend:{display:false}}});
+  mkC('c-dtasks','bar',{labels:sdates,datasets:[{label:'Tasks',data:dates.map(d=>bd[d].tasks),backgroundColor:sdates.map((_,i)=>`hsl(${340+i*7},100%,${52+i}%)`),borderRadius:6}]},{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{display:false}}});
 
-  mkChart('c-donut','doughnut',{
-    labels: wSorted.map(([w])=>w),
-    datasets:[{data:wSorted.map(([,d])=>d.mins),backgroundColor:wSorted.map(([w])=>getColor(w)),borderWidth:3,borderColor:'#111120'}]
-  },{plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:9}}},cutout:'65%'});
+  // ── MEMBER CARDS ──
+  const topH=ws[0],topV=[...ws].sort((a,b)=>b[1].vins-a[1].vins)[0],topT=[...ws].sort((a,b)=>b[1].tasks-a[1].tasks)[0];
+  document.getElementById('mKRow').innerHTML=`
+    <div class="kc"><div class="kc-icon">🥇</div><div class="kc-lbl">Top Hours</div><div class="kc-val">${topH[0].split(' ')[0]}</div><div class="kc-sub">${(topH[1].mins/60).toFixed(1)}h</div><div class="kc-glow"></div></div>
+    <div class="kc"><div class="kc-icon">🚗</div><div class="kc-lbl">Most VINs</div><div class="kc-val">${topV[0].split(' ')[0]}</div><div class="kc-sub">${topV[1].vins.toLocaleString()}</div><div class="kc-glow"></div></div>
+    <div class="kc"><div class="kc-icon">📋</div><div class="kc-lbl">Most Tasks</div><div class="kc-val">${topT[0].split(' ')[0]}</div><div class="kc-sub">${topT[1].tasks} tasks</div><div class="kc-glow"></div></div>
+    <div class="kc"><div class="kc-icon">📅</div><div class="kc-lbl">Active Days</div><div class="kc-val">${dates.length}</div><div class="kc-sub">Days tracked</div><div class="kc-glow"></div></div>
+    <div class="kc"><div class="kc-icon">⚡</div><div class="kc-lbl">Team Efficiency</div><div class="kc-val" style="-webkit-text-fill-color:${effColor(totE>0?totM/totE:1)}">${totE>0?(totM/totE*100).toFixed(0)+'%':'—'}</div><div class="kc-sub">Actual vs Target</div><div class="kc-glow"></div></div>`;
 
-  mkChart('c-hrs','bar',{
-    labels: wSorted.map(([w])=>w),
-    datasets:[{label:'Hours',data:wSorted.map(([,d])=>(d.mins/60).toFixed(1)),backgroundColor:wSorted.map(([w])=>getColor(w)+'cc'),borderRadius:6,borderSkipped:false}]
-  },{indexAxis:'y',scales:{x:{grid:G},y:{grid:{display:false}}},plugins:{legend:{display:false}}});
-
-  mkChart('c-vins','bar',{
-    labels:wSorted.map(([w])=>w.split(' ')[0]),
-    datasets:[
-      {label:'Reviewed',data:wSorted.map(([,d])=>d.vins),backgroundColor:wSorted.map(([w])=>getColor(w)+'77'),borderRadius:4},
-      {label:'Impacted',data:wSorted.map(([,d])=>d.imp),backgroundColor:wSorted.map(([w])=>getColor(w)),borderRadius:4}
-    ]
-  },{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:9}}}});
-
-  const typeArr = Object.entries(byType).sort((a,b)=>b[1].mins-a[1].mins).slice(0,7);
-  mkChart('c-type','polarArea',{
-    labels:typeArr.map(([t])=>t),
-    datasets:[{data:typeArr.map(([,d])=>d.mins),backgroundColor:PALETTE.slice(0,typeArr.length).map(c=>c+'cc')}]
-  },{plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:8}}}});
-
-  // ── Actual vs Expected ──
-  mkChart('c-actvsexp','bar',{
-    labels: wSorted.map(([w])=>w),
-    datasets:[
-      {label:'Actual Mins', data:wSorted.map(([,d])=>d.mins.toFixed(1)), backgroundColor:wSorted.map(([w])=>getColor(w)+'cc'), borderRadius:5},
-      {label:'Efficiency %', data:wSorted.map(([,d])=>d.exp>0?(d.mins/d.exp*100).toFixed(1):0), backgroundColor:'rgba(255,255,255,.15)', borderRadius:5,
-       borderColor:'#ffea00', borderWidth:2, type:'line', yAxisID:'y2', pointRadius:5, pointBackgroundColor:'#ffea00'}
-    ]
-  },{
-    scales:{
-      x:{grid:{display:false}},
-      y:{grid:G,title:{display:true,text:'Minutes',color:'#6b6e85'}},
-      y2:{position:'right',grid:{display:false},title:{display:true,text:'Efficiency %',color:'#ffea00'},ticks:{color:'#ffea00'}}
-    },
-    plugins:{
-      legend:{position:'top',labels:{font:{size:9},boxWidth:9}},
-      tooltip:{callbacks:{
-        label: ctx => ctx.dataset.label==='Efficiency %'
-          ? ` ${ctx.parsed.y}% efficiency`
-          : ` ${ctx.parsed.y} actual mins`
-      }}
-    }
-  });
-
-  // Daily actual vs expected
-  mkChart('c-dailyeff','line',{
-    labels:shortDates,
-    datasets:[
-      {label:'Actual Hrs',   data:dateSet.map(d=>(byDate[d].mins/60).toFixed(2)), borderColor:'#ff1744',backgroundColor:'rgba(255,23,68,.15)',fill:false,tension:.4,pointRadius:5,pointBackgroundColor:'#ff1744',pointBorderColor:'#fff',pointBorderWidth:2},
-      {label:'Expected Hrs', data:dateSet.map(d=>(byDate[d].exp/60).toFixed(2)),  borderColor:'#76ff03',backgroundColor:'rgba(118,255,3,.08)', fill:false,tension:.4,pointRadius:5,pointBackgroundColor:'#76ff03',pointBorderColor:'#fff',pointBorderWidth:2,borderDash:[5,4]}
-    ]
-  },{scales:{x:{grid:G},y:{grid:G}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:9}}}});
-
-  mkChart('c-dailyvins','line',{
-    labels:shortDates,
-    datasets:[{label:'VINs',data:dateSet.map(d=>byDate[d].vins),borderColor:'#ff1744',backgroundColor:'rgba(255,23,68,.15)',fill:true,tension:.4,pointBackgroundColor:'#ff1744',pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:5}]
-  },{scales:{x:{grid:G},y:{grid:G}},plugins:{legend:{display:false}}});
-
-  mkChart('c-dailytasks','bar',{
-    labels:shortDates,
-    datasets:[{label:'Tasks',data:dateSet.map(d=>byDate[d].tasks),backgroundColor:shortDates.map((_,i)=>`hsl(${340+i*8},100%,${50+i}%)`),borderRadius:7}]
-  },{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{display:false}}});
-
-  // ── MEMBERS ──
-  const topHrs  = wSorted[0];
-  const topVins = [...wSorted].sort((a,b)=>b[1].vins-a[1].vins)[0];
-  const topTask = [...wSorted].sort((a,b)=>b[1].tasks-a[1].tasks)[0];
-  document.getElementById('memberKpiRow').innerHTML = `
-    <div class="kpi"><div class="kpi-icon">🥇</div><div class="kpi-lbl">Top Hours</div><div class="kpi-val">${topHrs[0].split(' ')[0]}</div><div class="kpi-sub">${(topHrs[1].mins/60).toFixed(1)}h</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">🚗</div><div class="kpi-lbl">Most VINs</div><div class="kpi-val">${topVins[0].split(' ')[0]}</div><div class="kpi-sub">${topVins[1].vins.toLocaleString()}</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">📋</div><div class="kpi-lbl">Most Tasks</div><div class="kpi-val">${topTask[0].split(' ')[0]}</div><div class="kpi-sub">${topTask[1].tasks} tasks</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">📅</div><div class="kpi-lbl">Active Days</div><div class="kpi-val">${dateSet.length}</div><div class="kpi-sub">Days tracked</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">⚡</div><div class="kpi-lbl">Avg Impact</div><div class="kpi-val">${totalVins>0?(totalImp/totalVins*100).toFixed(1):0}%</div><div class="kpi-sub">Team avg</div><div class="kpi-glow"></div></div>`;
-
-  const mgrid = document.getElementById('memberCardGrid');
-  mgrid.innerHTML = '';
-  wSorted.forEach(([w,d],i)=>{
-    const share = (d.mins/totalMins*100).toFixed(1);
-    const impPct = d.vins>0?(d.imp/d.vins*100).toFixed(1):'0';
-    const color = getColor(w);
-    const el = document.createElement('div');
-    el.className = 'mcard';
-    el.innerHTML = `
+  const mg=document.getElementById('mGrid');mg.innerHTML='';
+  ws.forEach(([w,d],i)=>{
+    const share=(d.mins/totM*100).toFixed(1);
+    const ipct=d.vins>0?(d.imp/d.vins*100).toFixed(1):'0';
+    const epct=d.exp>0?(d.mins/d.exp*100).toFixed(0):'—';
+    const ec=effColor(d.exp>0?d.mins/d.exp:1);
+    const color=gc(w);
+    const el=document.createElement('div');el.className='mcard';
+    el.innerHTML=`
       <div class="mhead">
-        <div style="display:flex;align-items:center;gap:9px">
-          <div class="mavatar" style="background:${color}22;color:${color}">${EMOJIS[i]||'👤'}</div>
-          <div><div class="mname">${w}</div><div class="mrank" style="color:${color}">#${i+1} by time · ${dateSet.filter(dt=>byDate[dt].members[w]).length} days active</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="mavatar" style="background:${color}22;color:${color}">${EMO[i]||'👤'}</div>
+          <div><div class="mname">${w}</div><div class="mrank" style="color:${color}">#${i+1} · ${dates.filter(dt=>bd[dt].m[w]).length} days</div></div>
         </div>
         <div class="mbadge">${share}%</div>
       </div>
@@ -550,192 +356,121 @@ function processAndRender(rows) {
         <div class="mstats">
           <div class="mst"><div class="mst-l">Minutes</div><div class="mst-v" style="color:${color}">${Math.round(d.mins).toLocaleString()}</div></div>
           <div class="mst"><div class="mst-l">Hours</div><div class="mst-v" style="color:${color}">${(d.mins/60).toFixed(1)}h</div></div>
-          <div class="mst"><div class="mst-l">Efficiency</div><div class="mst-v" style="color:${d.exp>0&&d.mins/d.exp<=1?\'#76ff03\':d.mins/d.exp<=1.5?\'#ffea00\':\'#ff4444\'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+\'%\':\'—\'}</div></div>
-
+          <div class="mst"><div class="mst-l">Efficiency</div><div class="mst-v" style="color:${ec}">${epct}${epct!=='—'?'%':''}</div></div>
           <div class="mst"><div class="mst-l">VINs</div><div class="mst-v">${d.vins.toLocaleString()}</div></div>
-          <div class="mst"><div class="mst-l">Tasks</div>
           <div class="mst"><div class="mst-l">Tasks</div><div class="mst-v">${d.tasks}</div></div>
+          <div class="mst"><div class="mst-l">Impact</div><div class="mst-v" style="color:#00e676">${ipct}%</div></div>
         </div>
-        <div class="mbar"><div class="mbar-l"><span>Effort Share</span><span style="color:${color}">${share}%</span></div><div class="mbar-bg"><div class="mbar-f" style="width:${share}%;background:linear-gradient(90deg,${color},${color}88)"></div></div></div>
-        <div class="mbar" style="margin-top:6px"><div class="mbar-l"><span>Impact Rate</span><span style="color:#00e676">${impPct}%</span></div><div class="mbar-bg"><div class="mbar-f" style="width:${Math.min(impPct,100)}%;background:linear-gradient(90deg,#00e676,#69f0ae)"></div></div></div>
-
+        <div class="mbar"><div class="mbar-l"><span>Effort Share</span><span style="color:${color}">${share}%</span></div><div class="mbar-bg"><div class="mbar-f" style="width:${share}%;background:${color}"></div></div></div>
+        <div class="mbar" style="margin-top:5px"><div class="mbar-l"><span>Efficiency</span><span style="color:${ec}">${epct}${epct!=='—'?'%':''}</span></div><div class="mbar-bg"><div class="mbar-f" style="width:${d.exp>0?Math.min(d.mins/d.exp*100,200)/2:0}%;background:${ec}"></div></div></div>
         <canvas class="mini" id="mc-${i}"></canvas>
       </div>`;
-    mgrid.appendChild(el);
+    mg.appendChild(el);
     setTimeout(()=>{
-      if(charts['mc-'+i]){charts['mc-'+i].destroy();}
-      charts['mc-'+i]=new Chart(document.getElementById('mc-'+i),{
-        type:'line',
-        data:{labels:shortDates,datasets:[{data:dateSet.map(dt=>byDate[dt].members[w]?.mins||0),borderColor:color,backgroundColor:color+'22',fill:true,tension:.4,pointRadius:2,pointBackgroundColor:color}]},
-        options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}
-      });
-    },80);
+      if(CHS['mc-'+i])CHS['mc-'+i].destroy();
+      CHS['mc-'+i]=new Chart(document.getElementById('mc-'+i),{type:'line',data:{labels:sdates,datasets:[{data:dates.map(dt=>bd[dt].m[w]?.mins||0),borderColor:color,backgroundColor:color+'22',fill:true,tension:.4,pointRadius:2,pointBackgroundColor:color}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}});
+    },60);
   });
 
-  mkChart('c-heatbar','bar',{
-    labels:shortDates,
-    datasets:wSorted.map(([w])=>({label:w,data:dateSet.map(d=>((byDate[d].members[w]?.mins||0)/60).toFixed(2)),backgroundColor:getColor(w)+'bb',borderRadius:3}))
-  },{scales:{x:{grid:{display:false}},y:{grid:G,title:{display:true,text:'Hours',color:'#6b6e85'}}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:8}}}});
-
-  mkChart('c-impactrate','bar',{
-    labels:wSorted.map(([w])=>w.split(' ')[0]),
-    datasets:[{label:'Impact %',data:wSorted.map(([,d])=>d.vins>0?(d.imp/d.vins*100).toFixed(1):0),backgroundColor:wSorted.map(([w])=>getColor(w)+'cc'),borderRadius:7}]
-  },{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{display:false}}});
+  mkC('c-heat','bar',{labels:sdates,datasets:ws.map(([w])=>({label:w,data:dates.map(d=>((bd[d].m[w]?.mins||0)/60).toFixed(2)),backgroundColor:gc(w)+'bb',borderRadius:3}))},{scales:{x:{grid:{display:false}},y:{grid:G,title:{display:true,text:'Hours',color:'#6b6e85'}}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:8}}}});
+  mkC('c-eff','bar',{labels:ws.map(([w])=>w.split(' ')[0]),datasets:[{label:'Efficiency %',data:ws.map(([,d])=>d.exp>0?(d.mins/d.exp*100).toFixed(1):0),backgroundColor:ws.map(([,d])=>effColor(d.exp>0?d.mins/d.exp:1)+'cc'),borderRadius:6}]},{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{display:false}}});
 
   // ── DAILY ──
-  mkChart('c-dailyline','line',{
-    labels:shortDates,
-    datasets:[{label:'Hours',data:dateSet.map(d=>(byDate[d].mins/60).toFixed(2)),borderColor:'#ff1744',backgroundColor:'rgba(255,23,68,.18)',fill:true,tension:.45,pointBackgroundColor:'#ff1744',pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:6}]
-  },{scales:{x:{grid:G},y:{grid:G}},plugins:{legend:{display:false}}});
+  mkC('c-dline','line',{labels:sdates,datasets:[{label:'Hours',data:dates.map(d=>(bd[d].mins/60).toFixed(2)),borderColor:'#ff1744',backgroundColor:'rgba(255,23,68,.18)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#ff1744',pointBorderColor:'#fff',pointBorderWidth:2}]},{scales:{x:{grid:G},y:{grid:G}},plugins:{legend:{display:false}}});
+  mkC('c-dbar','bar',{labels:sdates,datasets:[{label:'VINs',data:dates.map(d=>bd[d].vins),backgroundColor:sdates.map((_,i)=>`rgba(255,${20+i*18},${65+i*12},.8)`),borderRadius:5}]},{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{display:false}}});
 
-  mkChart('c-dailybar','bar',{
-    labels:shortDates,
-    datasets:[{label:'VINs',data:dateSet.map(d=>byDate[d].vins),backgroundColor:shortDates.map((_,i)=>`rgba(255,${23+i*18},${68+i*12},.8)`),borderRadius:6}]
-  },{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{display:false}}});
-
-  const drow = document.getElementById('dailyCardRow');
-  drow.innerHTML = '';
-  dateSet.forEach((date,di)=>{
-    const dd = byDate[date];
-    const mArr = Object.entries(dd.members).sort((a,b)=>b[1].mins-a[1].mins);
-    const maxM = mArr.length ? mArr[0][1].mins : 1;
-    const parts = date.split('-');
-    const el = document.createElement('div');
-    el.className = 'dcard' + (di===0?' open':'');
+  const dr=document.getElementById('dRow');dr.innerHTML='';
+  dates.forEach((date,di)=>{
+    const dd=bd[date];
+    const mArr=Object.entries(dd.m).sort((a,b)=>b[1].mins-a[1].mins);
+    const maxM=mArr.length?mArr[0][1].mins:1;
+    const parts=date.split('-');
+    const el=document.createElement('div');
+    el.className='dcard'+(di===0?' open':'');
     el.innerHTML=`
       <div class="dhdr" onclick="this.parentElement.classList.toggle('open')">
         <div class="dleft">
-          <div class="ddate"><span class="dn">${parts[0]}</span><span class="dm">${parts[1]}</span></div>
-          <div><div class="dtitle">${date}</div><div class="dsub">${mArr.length} active · Top: ${mArr[0]?mArr[0][0]:'-'} (${mArr[0]?Math.round(mArr[0][1].mins):0}m)</div></div>
+          <div class="ddate"><span class="dn">${parts[0]}</span><span class="dm">${parts[1]||''}</span></div>
+          <div><div class="dtitle">${date}</div><div class="dsub">${mArr.length} active · Top: ${mArr[0]?mArr[0][0]:'-'}</div></div>
         </div>
         <div class="dright">
           <div class="dst"><div class="dst-v">${(dd.mins/60).toFixed(1)}h</div><div class="dst-l">Hours</div></div>
           <div class="dst"><div class="dst-v">${dd.vins.toLocaleString()}</div><div class="dst-l">VINs</div></div>
           <div class="dst"><div class="dst-v">${dd.imp.toLocaleString()}</div><div class="dst-l">Impact</div></div>
           <div class="dst"><div class="dst-v">${dd.tasks}</div><div class="dst-l">Tasks</div></div>
-          <div class="dst"><div class="dst-v" style="color:${dd.exp>0&&dd.mins/dd.exp<=1?'#76ff03':dd.mins/dd.exp<=1.5?'#ffea00':'#ff4444'}">${dd.exp>0?(dd.mins/dd.exp*100).toFixed(0)+'%':'—'}</div><div class="dst-l">Effic.</div></div>
+          <div class="dst"><div class="dst-v" style="color:${effColor(dd.exp>0?dd.mins/dd.exp:1)}">${dd.exp>0?(dd.mins/dd.exp*100).toFixed(0)+'%':'—'}</div><div class="dst-l">Effic.</div></div>
           <div class="dchev">▼</div>
         </div>
       </div>
       <div class="dbody">
-        <div>${mArr.map(([w,d])=>`
-          <div class="dmrow">
-            <div class="dm-dot" style="background:${getColor(w)}"></div>
-            <div class="dm-name" style="color:${getColor(w)}">${w}</div>
-            <div class="dm-bwrap"><div class="dm-bbg"><div class="dm-bf" style="width:${(d.mins/maxM*100).toFixed(0)}%;background:${getColor(w)}"></div></div></div>
-            <div class="dm-s"><b>${Math.round(d.mins)}m</b> · <b style="color:${d.exp>0&&d.mins/d.exp<=1?'#76ff03':d.mins/d.exp<=1.5?'#ffea00':'#ff4444'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b></div>
-          </div>`).join('')}</div>
-        <div style="background:var(--bg2);border-radius:9px;padding:11px;border:1px solid var(--border)">
-          <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:7px">Time Share</div>
+        <div>
+          ${mArr.map(m=>`
+            <div class="dmrow">
+              <div class="dm-dot" style="background:${gc(m[0])}"></div>
+              <div class="dm-name" style="color:${gc(m[0])}">${m[0]}</div>
+              <div class="dm-bwrap"><div class="dm-bbg"><div class="dm-bf" style="width:${(m[1].mins/maxM*100).toFixed(0)}%;background:${gc(m[0])}"></div></div></div>
+              <div class="dm-s"><b>${Math.round(m[1].mins)}m</b> · <b style="color:${effColor(m[1].exp>0?m[1].mins/m[1].exp:1)}">${m[1].exp>0?(m[1].mins/m[1].exp*100).toFixed(0)+'%':'—'}</b></div>
+            </div>`).join('')}
+        </div>
+        <div style="background:var(--bg2);border-radius:8px;padding:10px;border:1px solid var(--b)">
+          <div style="font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:6px">Time Share</div>
           <canvas style="max-height:160px" id="dc-${di}"></canvas>
         </div>
       </div>`;
-    drow.appendChild(el);
+    dr.appendChild(el);
     setTimeout(()=>{
-      if(charts['dc-'+di])charts['dc-'+di].destroy();
-      const dcTotal=mArr.reduce((s,[,d])=>s+d.mins,0);
-      // Custom plugin: draw % text inside each slice
-      const dcPctPlugin={
-        id:'dcPct'+di,
-        afterDraw(chart){
-          const {ctx,data}=chart;
-          const ds=chart.getDatasetMeta(0);
-          ds.data.forEach((arc,i)=>{
-            const pct=dcTotal>0?(data.datasets[0].data[i]/dcTotal*100):0;
-            if(pct<5) return; // skip tiny slices
-            const angle=(arc.startAngle+arc.endAngle)/2;
-            const r=(arc.innerRadius+arc.outerRadius)/2;
-            const x=arc.x+Math.cos(angle)*r;
-            const y=arc.y+Math.sin(angle)*r;
-            ctx.save();
-            ctx.font='bold 9px Inter,sans-serif';
-            ctx.fillStyle='#fff';
-            ctx.textAlign='center';
-            ctx.textBaseline='middle';
-            ctx.shadowColor='rgba(0,0,0,.8)';
-            ctx.shadowBlur=3;
-            ctx.fillText(pct.toFixed(0)+'%',x,y);
-            ctx.restore();
-          });
-        }
-      };
-      charts['dc-'+di]=new Chart(document.getElementById('dc-'+di),{
+      const tot=mArr.reduce((s,m)=>s+m[1].mins,0);
+      if(CHS['dc-'+di])CHS['dc-'+di].destroy();
+      CHS['dc-'+di]=new Chart(document.getElementById('dc-'+di),{
         type:'doughnut',
-        data:{
-          labels:mArr.map(([w])=>w),
-          datasets:[{data:mArr.map(([,d])=>d.mins),backgroundColor:mArr.map(([w])=>getColor(w)),borderWidth:2,borderColor:'#111120'}]
-        },
+        data:{labels:mArr.map(m=>{const p=tot>0?(m[1].mins/tot*100).toFixed(0):'0';return `${m[0]} (${p}%)`;}),datasets:[{data:mArr.map(m=>m[1].mins),backgroundColor:mArr.map(m=>gc(m[0])),borderWidth:2,borderColor:'#111120'}]},
         options:{responsive:true,cutout:'55%',plugins:{
-          legend:{
-            position:'right',
-            align:'center',
-            labels:{font:{size:9},boxWidth:8,color:'#b0b3c6',padding:8}
-          },
-          tooltip:{callbacks:{label:ctx=>{const pct=dcTotal>0?(ctx.raw/dcTotal*100).toFixed(1):'0';return ` ${Math.round(ctx.raw)}m — ${pct}%`;}}}
-        }},
-        plugins:[dcPctPlugin]
+          legend:{position:'right',align:'center',labels:{font:{size:8.5},boxWidth:7,color:'#b0b3c6',padding:7}},
+          tooltip:{callbacks:{label:ctx=>{const p=tot>0?(ctx.raw/tot*100).toFixed(1):'0';return ` ${Math.round(ctx.raw)}m — ${p}%`;}}},
+        },
+        plugins:[{id:'pct'+di,afterDraw(chart){
+          const{ctx,data}=chart;
+          chart.getDatasetMeta(0).data.forEach((arc,i)=>{
+            const p=tot>0?(data.datasets[0].data[i]/tot*100):0;
+            if(p<6)return;
+            const a=(arc.startAngle+arc.endAngle)/2,r=(arc.innerRadius+arc.outerRadius)/2;
+            ctx.save();ctx.font='bold 9px Inter,sans-serif';ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.8)';ctx.shadowBlur=3;
+            ctx.fillText(p.toFixed(0)+'%',arc.x+Math.cos(a)*r,arc.y+Math.sin(a)*r);ctx.restore();
+          });
+        }}]}
       });
-    },80);
+    },60);
   });
 
   // ── WEEKLY ──
-  function groupWeeks(dates){
-    if(!dates||!dates.length) return [];
+  function gWeeks(ds){
+    if(!ds.length)return[];
     const wks=[];let cur=[];
-    const parseDate=s=>{
-      // handles: "15-Jun-26", "15-Jun-2026", "25-June-26"
-      const m=s.match(/(\d+)[-\s](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[-\s](\d+)/i);
-      if(!m) return null;
-      const yr=m[3].length===2?'20'+m[3]:m[3];
-      return new Date(`${m[2]} ${m[1]} ${yr}`);
-    };
-    dates.forEach((d,i)=>{
-      if(i===0){cur.push(d);return;}
-      const prev=dates[i-1];
-      const dA=parseDate(prev), dB=parseDate(d);
-      const gap=(dA&&dB)?Math.abs(dB-dA)/(864e5):0;
-      console.log(`Gap ${prev}→${d}: ${gap.toFixed(1)} days`);
+    ds.forEach((d,i)=>{
+      if(!i){cur.push(d);return;}
+      const gap=Math.abs(pdate(d)-pdate(ds[i-1]))/(864e5);
       if(gap>2){wks.push([...cur]);cur=[];}
       cur.push(d);
     });
     if(cur.length)wks.push(cur);
-    console.log('Weeks grouped:', wks.length, wks.map(w=>w.length+'days'));
     return wks;
   }
-  const weeks = groupWeeks(dateSet);
+  const weeks=gWeeks(dates);
 
-  mkChart('c-weekcomp','bar',{
-    labels:weeks.map((_,i)=>`Week ${i+1}`),
-    datasets:[
-      {label:'Total Hours',data:weeks.map(wk=>wk.reduce((s,d)=>s+(byDate[d].mins/60),0).toFixed(1)),backgroundColor:'#ff1744cc',borderRadius:8},
-      {label:'Avg Hrs/Day', data:weeks.map(wk=>(wk.reduce((s,d)=>s+(byDate[d].mins/60),0)/wk.length).toFixed(1)),backgroundColor:'#ff6d00cc',borderRadius:8}
-    ]
-  },{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:9}}}});
+  mkC('c-wcomp','bar',{labels:weeks.map((_,i)=>`Week ${i+1}`),datasets:[{label:'Total Hours',data:weeks.map(wk=>wk.reduce((s,d)=>s+(bd[d].mins/60),0).toFixed(1)),backgroundColor:'#ff1744cc',borderRadius:7},{label:'Avg Hrs/Day',data:weeks.map(wk=>(wk.reduce((s,d)=>s+(bd[d].mins/60),0)/wk.length).toFixed(1)),backgroundColor:'#ff6d00cc',borderRadius:7}]},{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:8}}}});
+  mkC('c-wvins','bar',{labels:weeks.map((_,i)=>`Week ${i+1}`),datasets:[{label:'Total VINs',data:weeks.map(wk=>wk.reduce((s,d)=>s+bd[d].vins,0)),backgroundColor:'#d500f9cc',borderRadius:7},{label:'Impacted',data:weeks.map(wk=>wk.reduce((s,d)=>s+bd[d].imp,0)),backgroundColor:'#00e5ffcc',borderRadius:7}]},{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:8}}}});
 
-  mkChart('c-weekvins','bar',{
-    labels:weeks.map((_,i)=>`Week ${i+1}`),
-    datasets:[
-      {label:'Total VINs',data:weeks.map(wk=>wk.reduce((s,d)=>s+byDate[d].vins,0)),backgroundColor:'#d500f9cc',borderRadius:8},
-      {label:'Impacted',   data:weeks.map(wk=>wk.reduce((s,d)=>s+byDate[d].imp,0)), backgroundColor:'#00e5ffcc',borderRadius:8}
-    ]
-  },{scales:{x:{grid:{display:false}},y:{grid:G}},plugins:{legend:{position:'top',labels:{font:{size:9},boxWidth:9}}}});
-
-  const wcc = document.getElementById('weekCardCont');
-  wcc.innerHTML = '';
-  if(!weeks||!weeks.length){
-    wcc.innerHTML='<div style="color:var(--text3);padding:20px;text-align:center">No weekly data available yet</div>';
-    return;
-  }
+  const wc=document.getElementById('wCont');wc.innerHTML='';
   weeks.forEach((wDates,wi)=>{
-    const wT = wDates.reduce((a,d)=>({mins:a.mins+byDate[d].mins,vins:a.vins+byDate[d].vins,imp:a.imp+byDate[d].imp,tasks:a.tasks+byDate[d].tasks,exp:a.exp+(byDate[d].exp||0)}),{mins:0,vins:0,imp:0,tasks:0,exp:0});
+    const wT=wDates.reduce((a,d)=>({mins:a.mins+bd[d].mins,vins:a.vins+bd[d].vins,imp:a.imp+bd[d].imp,tasks:a.tasks+bd[d].tasks,exp:a.exp+bd[d].exp}),{mins:0,vins:0,imp:0,tasks:0,exp:0});
     const mT={};
-    wDates.forEach(d=>Object.entries(byDate[d].members).forEach(([w,dd])=>{
+    wDates.forEach(d=>Object.entries(bd[d].m).forEach(([w,dd])=>{
       if(!mT[w])mT[w]={mins:0,vins:0,imp:0,tasks:0,exp:0};
-      mT[w].mins+=dd.mins;mT[w].vins+=dd.vins;mT[w].imp+=dd.imp;mT[w].tasks+=dd.tasks;mT[w].exp+=(dd.exp||0);
+      mT[w].mins+=dd.mins;mT[w].vins+=dd.vins;mT[w].imp+=dd.imp;mT[w].tasks+=dd.tasks;mT[w].exp+=dd.exp;
     }));
-    const mArr=Object.entries(mT).sort((a,b)=>b[1].mins-a[1].mins);
-    const el=document.createElement('div');
-    el.className='wcard';
+    const mA=Object.entries(mT).sort((a,b)=>b[1].mins-a[1].mins);
+    const ec=effColor(wT.exp>0?wT.mins/wT.exp:1);
+    const el=document.createElement('div');el.className='wcard';
     el.innerHTML=`
       <div class="whead">
         <div><div class="wtitle">🔥 Week ${wi+1} — ${wDates[0]} → ${wDates[wDates.length-1]}</div><div class="wrange">${wDates.length} working days</div></div>
@@ -744,48 +479,64 @@ function processAndRender(rows) {
           <div class="wkpi"><div class="wkpi-v">${wT.vins.toLocaleString()}</div><div class="wkpi-l">VINs</div></div>
           <div class="wkpi"><div class="wkpi-v">${wT.imp.toLocaleString()}</div><div class="wkpi-l">Impacted</div></div>
           <div class="wkpi"><div class="wkpi-v">${wT.tasks}</div><div class="wkpi-l">Tasks</div></div>
-
+          <div class="wkpi"><div class="wkpi-v" style="color:${ec}">${wT.exp>0?(wT.mins/wT.exp*100).toFixed(0)+'%':'—'}</div><div class="wkpi-l">Effic.</div></div>
         </div>
       </div>
       <div class="wbody">
         <div class="wgrid">
-          <div style="background:var(--bg2);border-radius:9px;padding:12px;border:1px solid var(--border)">
-            <div style="font-size:.6rem;text-transform:uppercase;color:var(--text3);margin-bottom:7px;letter-spacing:1px">Daily Minutes</div>
-            <canvas style="max-height:185px" id="wb-${wi}"></canvas>
-          </div>
-          <div style="background:var(--bg2);border-radius:9px;padding:12px;border:1px solid var(--border)">
-            <div style="font-size:.6rem;text-transform:uppercase;color:var(--text3);margin-bottom:7px;letter-spacing:1px">Member Share</div>
-            <canvas style="max-height:185px" id="wp-${wi}"></canvas>
-          </div>
+          <div style="background:var(--bg2);border-radius:8px;padding:11px;border:1px solid var(--b)"><div style="font-size:.58rem;text-transform:uppercase;color:var(--t3);margin-bottom:7px;letter-spacing:1px">Daily Minutes</div><canvas style="max-height:180px" id="wb-${wi}"></canvas></div>
+          <div style="background:var(--bg2);border-radius:8px;padding:11px;border:1px solid var(--b)"><div style="font-size:.58rem;text-transform:uppercase;color:var(--t3);margin-bottom:7px;letter-spacing:1px">Member Share</div><canvas style="max-height:180px" id="wp-${wi}"></canvas></div>
         </div>
-        <div style="font-size:.6rem;text-transform:uppercase;color:var(--text3);letter-spacing:1px;margin-bottom:8px">Member Breakdown</div>
-        <div class="wmgrid">${mArr.map(([w,d])=>`<div class="wm" style="border-color:${getColor(w)}44"><div class="wm-n" style="color:${getColor(w)}">${w}</div><div class="wm-s"><span><b>${Math.round(d.mins)}m</b>Mins</span><span><b style="color:${d.exp>0&&d.mins/d.exp<=1?'#76ff03':d.mins/d.exp<=1.5?'#ffea00':'#ff4444'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b>Effic.</span><span><b>${(d.mins/60).toFixed(1)}h</b>Hours</span><span><b>${d.vins.toLocaleString()}</b>VINs</span></div></div>`).join('')}</div>
-        <div style="margin-top:13px;font-size:.6rem;text-transform:uppercase;color:var(--text3);letter-spacing:1px;margin-bottom:7px">Timeline</div>
-        <div class="tl">${wDates.map(d=>`<div class="tl-item"><div class="tl-d"></div><div class="tl-day">${d}</div><div class="tl-info">${(byDate[d].mins/60).toFixed(1)}h · ${byDate[d].vins.toLocaleString()} VINs · ${byDate[d].imp.toLocaleString()} impacted · ${byDate[d].tasks} tasks · ${Object.keys(byDate[d].members).length} members</div></div>`).join('')}</div>
+        <div style="font-size:.58rem;text-transform:uppercase;color:var(--t3);letter-spacing:1px;margin-bottom:7px">Member Breakdown</div>
+        <div class="wmgrid">${mA.map(([w,d])=>`<div class="wm" style="border-color:${gc(w)}44"><div class="wm-n" style="color:${gc(w)}">${w}</div><div class="wm-s"><span><b>${Math.round(d.mins)}m</b>Mins</span><span><b style="color:${effColor(d.exp>0?d.mins/d.exp:1)}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b>Effic.</span><span><b>${(d.mins/60).toFixed(1)}h</b>Hrs</span><span><b>${d.vins.toLocaleString()}</b>VINs</span></div></div>`).join('')}</div>
+        <div style="font-size:.58rem;text-transform:uppercase;color:var(--t3);letter-spacing:1px;margin-top:12px;margin-bottom:7px">Timeline</div>
+        <div class="tl">${wDates.map(d=>`<div class="tl-item"><div class="tl-d"></div><div class="tl-day">${d}</div><div class="tl-info">${(bd[d].mins/60).toFixed(1)}h · ${bd[d].vins.toLocaleString()} VINs · ${bd[d].imp.toLocaleString()} impacted · ${bd[d].tasks} tasks · ${Object.keys(bd[d].m).length} members</div></div>`).join('')}</div>
       </div>`;
-    wcc.appendChild(el);
+    wc.appendChild(el);
     setTimeout(()=>{
-      if(charts['wb-'+wi])charts['wb-'+wi].destroy();
-      if(charts['wp-'+wi])charts['wp-'+wi].destroy();
-      charts['wb-'+wi]=new Chart(document.getElementById('wb-'+wi),{
-        type:'bar',
-        data:{labels:wDates.map(d=>d.split('-')[0]+'-'+d.split('-')[1]),datasets:[{label:'Mins',data:wDates.map(d=>byDate[d].mins),backgroundColor:'#ff1744bb',borderRadius:6}]},
-        options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}
-      });
-      charts['wp-'+wi]=new Chart(document.getElementById('wp-'+wi),{
-        type:'doughnut',
-        data:{labels:mArr.map(([w])=>w),datasets:[{data:mArr.map(([,d])=>d.mins),backgroundColor:mArr.map(([w])=>getColor(w)),borderWidth:2,borderColor:'#111120'}]},
-        options:{responsive:true,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:8}}}}
-      });
-    },80);
+      if(CHS['wb-'+wi])CHS['wb-'+wi].destroy();
+      if(CHS['wp-'+wi])CHS['wp-'+wi].destroy();
+      CHS['wb-'+wi]=new Chart(document.getElementById('wb-'+wi),{type:'bar',data:{labels:wDates.map(d=>d.split('-')[0]+'-'+d.split('-')[1]),datasets:[{label:'Mins',data:wDates.map(d=>bd[d].mins),backgroundColor:'#ff1744bb',borderRadius:5}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+      CHS['wp-'+wi]=new Chart(document.getElementById('wp-'+wi),{type:'doughnut',data:{labels:mA.map(([w])=>w),datasets:[{data:mA.map(([,d])=>d.mins),backgroundColor:mA.map(([w])=>gc(w)),borderWidth:2,borderColor:'#111120'}]},options:{responsive:true,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:8}}}}});
+    },60);
   });
+
+  document.getElementById('syncLabel').textContent=`✅ ${data.length} rows loaded`;
+  document.getElementById('rowCount').textContent=`Rows: ${data.length}`;
+  document.getElementById('lastSync').textContent=`Updated: ${new Date().toLocaleTimeString('en-IN',{hour12:false})}`;
 }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-loadData();
-setInterval(loadData, 5 * 60 * 1000); // auto-refresh every 5 min
+// ═══════════════════════════════════════
+// BACKGROUND SYNC
+// ═══════════════════════════════════════
+const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vRl_3g25PgrDGOBIcwKh_U7IIowogVtUFmmqtUKnLUKR2S4zxjkly29RUD9_T8I_tvZ5Mam5Y9RqKFF/pub?gid=421286318&single=true&output=csv';
+async function bgSync(){
+  document.querySelector('.sync-btn').textContent='⏳';
+  const enc=encodeURIComponent(CSV_URL);
+  const proxies=[`https://corsproxy.io/?${enc}`,`https://api.allorigins.win/raw?url=${enc}`,`https://api.codetabs.com/v1/proxy?quest=${enc}`];
+  for(const url of proxies){
+    try{
+      const r=await Promise.race([fetch(url,{cache:'no-cache'}),new Promise((_,rj)=>setTimeout(()=>rj(new Error('t/o')),7000))]);
+      if(!r.ok)continue;
+      const txt=await r.text();
+      if(!txt||txt.length<100||txt.trim().startsWith('<'))continue;
+      const rows=parseCSV(txt);
+      if(rows.length<5)continue;
+      render(rows);
+      showToast('✅ Live data synced!',3000);
+      document.querySelector('.sync-btn').textContent='🔄 Sync';
+      return;
+    }catch(e){continue;}
+  }
+  showToast('📦 Using cached data — live sync unavailable',4000);
+  document.querySelector('.sync-btn').textContent='🔄 Sync';
+}
+
+// ═══════════════════════════════════════
+// INIT — render immediately on load
+// ═══════════════════════════════════════
+render(RAW);
+setInterval(bgSync, 5*60*1000);
 </script>
 </body>
 </html>
