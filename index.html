@@ -235,16 +235,13 @@ const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRl_3g25PgrDG
 function buildProxyUrls(csvUrl) {
   const enc = encodeURIComponent(csvUrl);
   return [
-    // Strategy 1: corsproxy.io
-    { url: `https://corsproxy.io/?${enc}`, name: 'corsproxy.io' },
-    // Strategy 2: allorigins raw
-    { url: `https://api.allorigins.win/raw?url=${enc}`, name: 'allorigins.win' },
-    // Strategy 3: allorigins get (returns JSON wrapper)
-    { url: `https://api.allorigins.win/get?url=${enc}`, name: 'allorigins.win/get', json: true },
-    // Strategy 4: cors.sh
-    { url: csvUrl, name: 'direct (no proxy)', headers: { 'x-cors-api-key': 'temp' } },
-    // Strategy 5: thingproxy
-    { url: `https://thingproxy.freeboard.io/fetch/${csvUrl}`, name: 'thingproxy' },
+    { url: `https://corsproxy.io/?${enc}`,                         name: 'corsproxy.io' },
+    { url: `https://api.allorigins.win/raw?url=${enc}`,            name: 'allorigins/raw' },
+    { url: `https://api.allorigins.win/get?url=${enc}`,            name: 'allorigins/get', json: true },
+    { url: `https://cors-anywhere.herokuapp.com/${csvUrl}`,        name: 'cors-anywhere', headers:{'X-Requested-With':'XMLHttpRequest'} },
+    { url: `https://api.codetabs.com/v1/proxy?quest=${enc}`,       name: 'codetabs' },
+    { url: `https://thingproxy.freeboard.io/fetch/${csvUrl}`,      name: 'thingproxy' },
+    { url: `https://yacdn.org/serve/${csvUrl}`,                    name: 'yacdn' },
   ];
 }
 
@@ -318,7 +315,13 @@ function splitCSVLine(line) {
   return vals;
 }
 function n(v) { return parseFloat((v || '0').replace(/,/g, '')) || 0; }
-function normDate(d) { return (d || '').replace(/june/i, 'Jun').replace(/\s+/g, ' ').trim(); }
+function normDate(d) {
+  return (d || '').replace(/june/gi,'Jun').replace(/july/gi,'Jul').replace(/aug/gi,'Aug')
+    .replace(/jan/gi,'Jan').replace(/feb/gi,'Feb').replace(/mar/gi,'Mar')
+    .replace(/april/gi,'Apr').replace(/may/gi,'May').replace(/sept/gi,'Sep')
+    .replace(/oct/gi,'Oct').replace(/nov/gi,'Nov').replace(/dec/gi,'Dec')
+    .replace(/\s+/g,' ').trim();
+}
 
 // ══════════════════════════════════════════
 // FETCH WITH FALLBACK PROXIES
@@ -328,32 +331,34 @@ async function fetchWithFallback() {
   let lastErr = '';
   for (const proxy of proxies) {
     document.getElementById('lstep').textContent = `Trying: ${proxy.name}...`;
+    console.log(`Trying proxy: ${proxy.name} → ${proxy.url.substring(0,80)}`);
     try {
-      const opts = proxy.headers ? { headers: proxy.headers } : {};
+      const headers = proxy.headers || {};
       const resp = await Promise.race([
-        fetch(proxy.url, opts),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000))
+        fetch(proxy.url, { headers, mode: 'cors', cache: 'no-cache' }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 12000))
       ]);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       let text;
       if (proxy.json) {
         const j = await resp.json();
-        text = j.contents;
+        text = j.contents || j.body || '';
       } else {
         text = await resp.text();
       }
-      // Validate it looks like CSV
-      if (!text || text.length < 50 || text.includes('<html') || text.includes('<!DOCTYPE')) {
-        throw new Error('Not valid CSV data');
-      }
-      console.log(`✅ Success with: ${proxy.name}`);
+      // Strip BOM
+      text = text.replace(/^﻿/, '');
+      // Must contain comma-separated data with Date column
+      if (!text || text.length < 30) throw new Error('Response too short');
+      if (text.trim().startsWith('<')) throw new Error('Got HTML not CSV');
+      console.log(`✅ ${proxy.name} success — ${text.length} chars`);
       return text;
     } catch (e) {
       lastErr = `${proxy.name}: ${e.message}`;
-      console.warn(`❌ Failed ${proxy.name}:`, e.message);
+      console.warn(`❌ ${proxy.name} failed:`, e.message);
     }
   }
-  throw new Error(`All proxies failed. Last error: ${lastErr}`);
+  throw new Error(`All ${proxies.length} proxies failed. Last: ${lastErr}`);
 }
 
 // ══════════════════════════════════════════
@@ -381,12 +386,11 @@ async function loadData() {
     document.getElementById('loader').style.display = 'none';
     document.getElementById('mainWrap').style.display = 'block';
   } catch (err) {
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('syncLabel').textContent = '⚠️ Using cached data';
-    document.getElementById('mainWrap').style.display = 'block';
-    // Show toast
-    showToast('⚠️ Could not reach Google Sheets. Showing last loaded data. Check internet & try Sync Now.', 8000);
     console.error('Load failed:', err);
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('syncLabel').textContent = '⚠️ Sync failed — check console (F12)';
+    document.getElementById('mainWrap').style.display = 'block';
+    showToast(`⚠️ ${err.message}. Open F12 Console for details. Try Sync Now.`, 10000);
   }
 
   btn.disabled = false;
@@ -410,26 +414,42 @@ function showToast(msg, dur = 4000) {
 // PROCESS & RENDER
 // ══════════════════════════════════════════
 function processAndRender(rows) {
+  // Auto-detect column names (case-insensitive fuzzy match)
+  const sample = rows[0] || {};
+  const keys = Object.keys(sample);
+  const findKey = (...pats) => keys.find(k => pats.some(p => k.toLowerCase().replace(/\s+/g,'').includes(p.toLowerCase().replace(/\s+/g,'')))) || '';
+  const dateKey   = findKey('Date');
+  const workerKey = findKey('Workdoneby','Workby','Worker','Member','Name');
+  const minsKey   = findKey('Minutesdone','Minutes','Mins','Time');
+  const vinsKey   = findKey('VINs','Vin','Count');
+  const impKey    = findKey('ImpactedVINs','Impacted','Impact');
+  const typeKey   = findKey('ReviewType','Type','Review');
+  console.log('Columns detected:', {dateKey,workerKey,minsKey,vinsKey,impKey,typeKey});
+  console.log('All columns:', keys);
+
   // Normalize
   rows.forEach(r => {
-    r._date   = normDate(r['Date'] || r['date'] || '');
-    r._worker = (r['Work done by '] || r['Work done by'] || '').trim();
-    r._mins   = n(r['Minutes  done'] || r['Minutes done'] || r['Minutes'] || '0');
-    r._vins   = n(r['VINs'] || '0');
-    r._imp    = n(r['Impacted VINs'] || '0');
-    r._type   = (r['Review Type'] || '').trim();
+    r._date   = normDate(r[dateKey] || r['Date'] || r['date'] || '');
+    r._worker = (r[workerKey] || r['Work done by '] || r['Work done by'] || '').trim();
+    r._mins   = n(r[minsKey] || r['Minutes  done'] || r['Minutes done'] || r['Minutes'] || '0');
+    r._vins   = n(r[vinsKey] || r['VINs'] || '0');
+    r._imp    = n(r[impKey]  || r['Impacted VINs'] || '0');
+    r._type   = (r[typeKey]  || r['Review Type'] || '').trim();
   });
   rows = rows.filter(r => r._worker && r._date);
+  console.log('Valid rows after filter:', rows.length, 'Sample:', rows[0]);
 
   // Sorted unique dates
-  const dateSet = [...new Set(rows.map(r => r._date))].sort((a, b) => {
+  const dateSet = [...new Set(rows.map(r => r._date))].filter(d=>d&&d.length>3).sort((a, b) => {
     const p = s => {
-      const m = s.match(/(\d+)[-\s](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-\s](\d+)/i);
+      const m = s.match(/(\d+)[-\s](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[-\s](\d+)/i);
       if (!m) return 0;
-      return new Date(`${m[2]} ${m[1]} 20${m[3].length===2?m[3]:'26'}`);
+      const yr = m[3].length===2 ? '20'+m[3] : m[3];
+      return new Date(`${m[2]} ${m[1]} ${yr}`);
     };
     return p(a) - p(b);
   });
+  console.log('Dates found:', dateSet.length, dateSet.slice(0,5));
 
   const workerSet = [...new Set(rows.map(r => r._worker))].filter(Boolean);
 
@@ -678,16 +698,26 @@ function processAndRender(rows) {
 
   // ── WEEKLY ──
   function groupWeeks(dates){
+    if(!dates||!dates.length) return [];
     const wks=[];let cur=[];
+    const parseDate=s=>{
+      // handles: "15-Jun-26", "15-Jun-2026", "25-June-26"
+      const m=s.match(/(\d+)[-\s](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[-\s](\d+)/i);
+      if(!m) return null;
+      const yr=m[3].length===2?'20'+m[3]:m[3];
+      return new Date(`${m[2]} ${m[1]} ${yr}`);
+    };
     dates.forEach((d,i)=>{
       if(i===0){cur.push(d);return;}
       const prev=dates[i-1];
-      const parse=s=>{const m=s.match(/(\d+)[-](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-](\d+)/i);return m?new Date(`${m[2]} ${m[1]} 20${m[3]}`):new Date();};
-      const gap=Math.abs(parse(d)-parse(prev))/(864e5);
-      if(gap>2){wks.push(cur);cur=[];}
+      const dA=parseDate(prev), dB=parseDate(d);
+      const gap=(dA&&dB)?Math.abs(dB-dA)/(864e5):0;
+      console.log(`Gap ${prev}→${d}: ${gap.toFixed(1)} days`);
+      if(gap>2){wks.push([...cur]);cur=[];}
       cur.push(d);
     });
     if(cur.length)wks.push(cur);
+    console.log('Weeks grouped:', wks.length, wks.map(w=>w.length+'days'));
     return wks;
   }
   const weeks = groupWeeks(dateSet);
@@ -710,6 +740,10 @@ function processAndRender(rows) {
 
   const wcc = document.getElementById('weekCardCont');
   wcc.innerHTML = '';
+  if(!weeks||!weeks.length){
+    wcc.innerHTML='<div style="color:var(--text3);padding:20px;text-align:center">No weekly data available yet</div>';
+    return;
+  }
   weeks.forEach((wDates,wi)=>{
     const wT = wDates.reduce((a,d)=>({mins:a.mins+byDate[d].mins,vins:a.vins+byDate[d].vins,imp:a.imp+byDate[d].imp,tasks:a.tasks+byDate[d].tasks}),{mins:0,vins:0,imp:0,tasks:0});
     const mT={};
