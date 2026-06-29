@@ -191,10 +191,7 @@ canvas.mini{max-height:75px;margin-top:8px;}
       <div class="card"><div class="ctitle"><span class="cdot"></span>VINs Reviewed vs Impacted</div><canvas id="c-vins"></canvas></div>
       <div class="card"><div class="ctitle"><span class="cdot"></span>Review Type Split</div><canvas id="c-type"></canvas></div>
     </div>
-    <div class="g2">
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Actual vs Expected Minutes — by Member</div><canvas id="c-actvsexp"></canvas></div>
-      <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Actual vs Expected Hours</div><canvas id="c-dailyeff"></canvas></div>
-    </div>
+
     <div class="g2">
       <div class="card"><div class="ctitle"><span class="cdot"></span>Daily VINs Trend</div><canvas id="c-dailyvins"></canvas></div>
       <div class="card"><div class="ctitle"><span class="cdot"></span>Daily Tasks</div><canvas id="c-dailytasks"></canvas></div>
@@ -537,7 +534,8 @@ function processAndRender(rows) {
     <div class="kpi"><div class="kpi-icon">⚡</div><div class="kpi-lbl">Impacted VINs</div><div class="kpi-val">${totalImp.toLocaleString()}</div><div class="kpi-sub">${totalVins>0?(totalImp/totalVins*100).toFixed(1):0}% rate</div><div class="kpi-glow"></div></div>
     <div class="kpi"><div class="kpi-icon">✅</div><div class="kpi-lbl">Tasks Done</div><div class="kpi-val">${totalTasks.toLocaleString()}</div><div class="kpi-sub">${dateSet.length} active days</div><div class="kpi-glow"></div></div>
     <div class="kpi"><div class="kpi-icon">👥</div><div class="kpi-lbl">Team Size</div><div class="kpi-val">${wSorted.length}</div><div class="kpi-sub">Active members</div><div class="kpi-glow"></div></div>
-    <div class="kpi"><div class="kpi-icon">🎯</div><div class="kpi-lbl">Efficiency</div><div class="kpi-val">${effPct}%</div><div class="kpi-sub">Actual vs Expected</div><div class="kpi-glow"></div></div>`;
+    <div class="kpi"><div class="kpi-icon">🎯</div><div class="kpi-lbl">Efficiency</div><div class="kpi-val" style="-webkit-text-fill-color:${totalExp>0&&totalMins/totalExp<=1?'#76ff03':totalMins/totalExp<=1.5?'#ffea00':'#ff4444'}">${totalExp>0?(totalMins/totalExp*100).toFixed(0)+'%':'—'}</div><div class="kpi-sub">Actual vs Target</div><div class="kpi-glow"></div></div>`;
+`;
 
   // ── OVERVIEW CHARTS ──
   mkChart('c-stack','bar',{
@@ -577,20 +575,21 @@ function processAndRender(rows) {
     labels: wSorted.map(([w])=>w),
     datasets:[
       {label:'Actual Mins', data:wSorted.map(([,d])=>d.mins.toFixed(1)), backgroundColor:wSorted.map(([w])=>getColor(w)+'cc'), borderRadius:5},
-      {label:'Expected Mins',data:wSorted.map(([,d])=>d.exp.toFixed(1)), backgroundColor:'rgba(255,255,255,.12)', borderRadius:5,
-       borderColor:wSorted.map(([w])=>getColor(w)), borderWidth:2}
+      {label:'Efficiency %', data:wSorted.map(([,d])=>d.exp>0?(d.mins/d.exp*100).toFixed(1):0), backgroundColor:'rgba(255,255,255,.15)', borderRadius:5,
+       borderColor:'#ffea00', borderWidth:2, type:'line', yAxisID:'y2', pointRadius:5, pointBackgroundColor:'#ffea00'}
     ]
   },{
-    scales:{x:{grid:{display:false}},y:{grid:G}},
+    scales:{
+      x:{grid:{display:false}},
+      y:{grid:G,title:{display:true,text:'Minutes',color:'#6b6e85'}},
+      y2:{position:'right',grid:{display:false},title:{display:true,text:'Efficiency %',color:'#ffea00'},ticks:{color:'#ffea00'}}
+    },
     plugins:{
       legend:{position:'top',labels:{font:{size:9},boxWidth:9}},
       tooltip:{callbacks:{
-        afterBody: items => {
-          const i=items[0].dataIndex;
-          const act=wSorted[i][1].mins, exp=wSorted[i][1].exp;
-          const eff=exp>0?(act/exp*100).toFixed(1):'—';
-          return [`Efficiency: ${eff}%`, exp>act?`⚡ Under by ${(exp-act).toFixed(0)}m`:`✅ Over by ${(act-exp).toFixed(0)}m`];
-        }
+        label: ctx => ctx.dataset.label==='Efficiency %'
+          ? ` ${ctx.parsed.y}% efficiency`
+          : ` ${ctx.parsed.y} actual mins`
       }}
     }
   });
@@ -643,23 +642,17 @@ function processAndRender(rows) {
       </div>
       <div class="mbody">
         <div class="mstats">
-          <div class="mst"><div class="mst-l">Actual Mins</div><div class="mst-v" style="color:${color}">${Math.round(d.mins).toLocaleString()}</div></div>
+          <div class="mst"><div class="mst-l">Minutes</div><div class="mst-v" style="color:${color}">${Math.round(d.mins).toLocaleString()}</div></div>
           <div class="mst"><div class="mst-l">Hours</div><div class="mst-v" style="color:${color}">${(d.mins/60).toFixed(1)}h</div></div>
-          <div class="mst"><div class="mst-l">Expected Mins</div><div class="mst-v" style="color:#76ff03">${Math.round(d.exp).toLocaleString()}</div></div>
-          <div class="mst"><div class="mst-l">Efficiency</div><div class="mst-v" style="color:${d.exp>0&&d.mins/d.exp>=0.9?'#76ff03':'#ffea00'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</div></div>
+          <div class="mst"><div class="mst-l">Efficiency</div><div class="mst-v" style="color:${d.exp>0&&d.mins/d.exp<=1?\'#76ff03\':d.mins/d.exp<=1.5?\'#ffea00\':\'#ff4444\'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+\'%\':\'—\'}</div></div>
+
           <div class="mst"><div class="mst-l">VINs</div><div class="mst-v">${d.vins.toLocaleString()}</div></div>
+          <div class="mst"><div class="mst-l">Tasks</div>
           <div class="mst"><div class="mst-l">Tasks</div><div class="mst-v">${d.tasks}</div></div>
         </div>
         <div class="mbar"><div class="mbar-l"><span>Effort Share</span><span style="color:${color}">${share}%</span></div><div class="mbar-bg"><div class="mbar-f" style="width:${share}%;background:linear-gradient(90deg,${color},${color}88)"></div></div></div>
         <div class="mbar" style="margin-top:6px"><div class="mbar-l"><span>Impact Rate</span><span style="color:#00e676">${impPct}%</span></div><div class="mbar-bg"><div class="mbar-f" style="width:${Math.min(impPct,100)}%;background:linear-gradient(90deg,#00e676,#69f0ae)"></div></div></div>
-        <div class="mbar" style="margin-top:6px">
-          <div class="mbar-l">
-            <span>Efficiency (Actual/Expected)</span>
-            <span style="color:${d.exp>0&&d.mins/d.exp>=0.9?'#76ff03':d.mins/d.exp>=0.7?'#ffea00':'#ff1744'}">${d.exp>0?(d.mins/d.exp*100).toFixed(1)+'%':'—'}</span>
-          </div>
-          <div class="mbar-bg"><div class="mbar-f" style="width:${d.exp>0?Math.min(d.mins/d.exp*100,150).toFixed(0):0}%;background:linear-gradient(90deg,#76ff03,#ffea00)"></div></div>
-          <div style="font-size:.58rem;color:var(--text3);margin-top:3px">Actual: ${Math.round(d.mins)}m · Expected: ${Math.round(d.exp)}m</div>
-        </div>
+
         <canvas class="mini" id="mc-${i}"></canvas>
       </div>`;
     mgrid.appendChild(el);
@@ -714,7 +707,7 @@ function processAndRender(rows) {
           <div class="dst"><div class="dst-v">${dd.vins.toLocaleString()}</div><div class="dst-l">VINs</div></div>
           <div class="dst"><div class="dst-v">${dd.imp.toLocaleString()}</div><div class="dst-l">Impact</div></div>
           <div class="dst"><div class="dst-v">${dd.tasks}</div><div class="dst-l">Tasks</div></div>
-          <div class="dst"><div class="dst-v" style="color:#76ff03">${dd.exp>0?(dd.mins/dd.exp*100).toFixed(0)+'%':'—'}</div><div class="dst-l">Effic.</div></div>
+          <div class="dst"><div class="dst-v" style="color:${dd.exp>0&&dd.mins/dd.exp<=1?'#76ff03':dd.mins/dd.exp<=1.5?'#ffea00':'#ff4444'}">${dd.exp>0?(dd.mins/dd.exp*100).toFixed(0)+'%':'—'}</div><div class="dst-l">Effic.</div></div>
           <div class="dchev">▼</div>
         </div>
       </div>
@@ -724,7 +717,7 @@ function processAndRender(rows) {
             <div class="dm-dot" style="background:${getColor(w)}"></div>
             <div class="dm-name" style="color:${getColor(w)}">${w}</div>
             <div class="dm-bwrap"><div class="dm-bbg"><div class="dm-bf" style="width:${(d.mins/maxM*100).toFixed(0)}%;background:${getColor(w)}"></div></div></div>
-            <div class="dm-s"><b>${Math.round(d.mins)}m</b> · <b style="color:${d.exp>0&&d.mins/d.exp>=0.85?'#76ff03':'#ffea00'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b></div>
+            <div class="dm-s"><b>${Math.round(d.mins)}m</b> · <b style="color:${d.exp>0&&d.mins/d.exp<=1?'#76ff03':d.mins/d.exp<=1.5?'#ffea00':'#ff4444'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b></div>
           </div>`).join('')}</div>
         <div style="background:var(--bg2);border-radius:9px;padding:11px;border:1px solid var(--border)">
           <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:7px">Time Share</div>
@@ -845,7 +838,7 @@ function processAndRender(rows) {
           <div class="wkpi"><div class="wkpi-v">${wT.vins.toLocaleString()}</div><div class="wkpi-l">VINs</div></div>
           <div class="wkpi"><div class="wkpi-v">${wT.imp.toLocaleString()}</div><div class="wkpi-l">Impacted</div></div>
           <div class="wkpi"><div class="wkpi-v">${wT.tasks}</div><div class="wkpi-l">Tasks</div></div>
-          <div class="wkpi"><div class="wkpi-v" style="color:#76ff03">${wT.exp>0?(wT.mins/wT.exp*100).toFixed(0)+'%':'—'}</div><div class="wkpi-l">Efficiency</div></div>
+
         </div>
       </div>
       <div class="wbody">
@@ -860,7 +853,7 @@ function processAndRender(rows) {
           </div>
         </div>
         <div style="font-size:.6rem;text-transform:uppercase;color:var(--text3);letter-spacing:1px;margin-bottom:8px">Member Breakdown</div>
-        <div class="wmgrid">${mArr.map(([w,d])=>`<div class="wm" style="border-color:${getColor(w)}44"><div class="wm-n" style="color:${getColor(w)}">${w}</div><div class="wm-s"><span><b>${Math.round(d.mins)}m</b>Actual</span><span><b>${Math.round(d.exp||0)}m</b>Expected</span><span><b style="color:${d.exp>0&&d.mins/d.exp>=0.85?'#76ff03':'#ffea00'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b>Effic.</span><span><b>${d.vins.toLocaleString()}</b>VINs</span></div></div>`).join('')}</div>
+        <div class="wmgrid">${mArr.map(([w,d])=>`<div class="wm" style="border-color:${getColor(w)}44"><div class="wm-n" style="color:${getColor(w)}">${w}</div><div class="wm-s"><span><b>${Math.round(d.mins)}m</b>Mins</span><span><b style="color:${d.exp>0&&d.mins/d.exp<=1?'#76ff03':d.mins/d.exp<=1.5?'#ffea00':'#ff4444'}">${d.exp>0?(d.mins/d.exp*100).toFixed(0)+'%':'—'}</b>Effic.</span><span><b>${(d.mins/60).toFixed(1)}h</b>Hours</span><span><b>${d.vins.toLocaleString()}</b>VINs</span></div></div>`).join('')}</div>
         <div style="margin-top:13px;font-size:.6rem;text-transform:uppercase;color:var(--text3);letter-spacing:1px;margin-bottom:7px">Timeline</div>
         <div class="tl">${wDates.map(d=>`<div class="tl-item"><div class="tl-d"></div><div class="tl-day">${d}</div><div class="tl-info">${(byDate[d].mins/60).toFixed(1)}h · ${byDate[d].vins.toLocaleString()} VINs · ${byDate[d].imp.toLocaleString()} impacted · ${byDate[d].tasks} tasks · ${Object.keys(byDate[d].members).length} members</div></div>`).join('')}</div>
       </div>`;
