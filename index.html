@@ -504,15 +504,49 @@ function render(rows){
 }
 
 // ═══════════════════════════════════════
-// DATA REFRESH — re-renders from current embedded dataset
-// (Live Google Sheets sync disabled: sheet has no Minutes column,
-//  so data is updated by re-uploading CSV and regenerating this file)
+// LIVE SYNC via Google Apps Script
+// (No CORS issues — script.google.com allows cross-origin by default)
+// SETUP REQUIRED: paste apps_script.gs into your Sheet's Apps Script editor,
+// deploy as Web App, then paste the deployment URL below.
 // ═══════════════════════════════════════
-function bgSync(){
-  document.querySelector('.sync-btn').textContent='⏳';
-  render(RAW);
-  showToast('✅ Refreshed from latest loaded data (' + new Date().toLocaleTimeString('en-IN',{hour12:false}) + ')', 3000);
-  document.querySelector('.sync-btn').textContent='🔄 Sync';
+const APPS_SCRIPT_URL = 'PASTE_YOUR_DEPLOYED_WEB_APP_URL_HERE';
+
+async function bgSync(){
+  const btn = document.querySelector('.sync-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳';
+
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE_YOUR')) {
+    // Not configured yet — just re-render cached data
+    render(RAW);
+    showToast('⚠️ Live sync not configured yet. Showing cached data. See setup instructions.', 4000);
+    btn.disabled = false;
+    btn.textContent = '🔄 Sync';
+    return;
+  }
+
+  try {
+    const resp = await Promise.race([
+      fetch(APPS_SCRIPT_URL + '?t=' + Date.now(), { cache: 'no-cache' }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000))
+    ]);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const json = await resp.json();
+    if (!json.rows || !json.rows.length) throw new Error('No rows returned');
+
+    render(json.rows);
+    document.getElementById('rowCount').textContent = `Rows: ${json.rowCount} (live)`;
+    document.getElementById('lastSync').textContent = `Live: ${new Date().toLocaleTimeString('en-IN',{hour12:false})}`;
+    document.getElementById('syncLabel').textContent = `✅ Live · ${json.rowCount} rows`;
+    showToast('✅ Live data synced from Google Sheets!', 3000);
+  } catch (err) {
+    console.warn('Live sync failed:', err.message);
+    render(RAW);
+    showToast(`⚠️ Live sync failed (${err.message}). Showing cached data.`, 4000);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🔄 Sync';
 }
 </script>
 </body>
