@@ -504,36 +504,16 @@ function render(rows){
 }
 
 // ═══════════════════════════════════════
-// BACKGROUND SYNC
+// DATA REFRESH — re-renders from current embedded dataset
+// (Live Google Sheets sync disabled: sheet has no Minutes column,
+//  so data is updated by re-uploading CSV and regenerating this file)
 // ═══════════════════════════════════════
-const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vRl_3g25PgrDGOBIcwKh_U7IIowogVtUFmmqtUKnLUKR2S4zxjkly29RUD9_T8I_tvZ5Mam5Y9RqKFF/pub?gid=421286318&single=true&output=csv';
-async function bgSync(){
+function bgSync(){
   document.querySelector('.sync-btn').textContent='⏳';
-  const enc=encodeURIComponent(CSV_URL);
-  const proxies=[`https://corsproxy.io/?${enc}`,`https://api.allorigins.win/raw?url=${enc}`,`https://api.codetabs.com/v1/proxy?quest=${enc}`];
-  for(const url of proxies){
-    try{
-      const r=await Promise.race([fetch(url,{cache:'no-cache'}),new Promise((_,rj)=>setTimeout(()=>rj(new Error('t/o')),7000))]);
-      if(!r.ok)continue;
-      const txt=await r.text();
-      if(!txt||txt.length<100||txt.trim().startsWith('<'))continue;
-      const rows=parseCSV(txt);
-      if(rows.length<5)continue;
-      render(rows);
-      showToast('✅ Live data synced!',3000);
-      document.querySelector('.sync-btn').textContent='🔄 Sync';
-      return;
-    }catch(e){continue;}
-  }
-  showToast('📦 Using cached data — live sync unavailable',4000);
+  render(RAW);
+  showToast('✅ Refreshed from latest loaded data (' + new Date().toLocaleTimeString('en-IN',{hour12:false}) + ')', 3000);
   document.querySelector('.sync-btn').textContent='🔄 Sync';
 }
-
-// ═══════════════════════════════════════
-// INIT — render immediately on load
-// ═══════════════════════════════════════
-render(RAW);
-setInterval(bgSync, 5*60*1000);
 </script>
 </body>
 </html>
